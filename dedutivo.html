@@ -1,0 +1,537 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dedutivo</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCI+PHJlY3Qgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByeD0iMTEiIGZpbGw9IiMwZjEyMTgiLz48Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxMiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZjBiODRhIiBzdHJva2Utd2lkdGg9IjMuNSIvPjxwYXRoIGQ9Ik0yOSAyOWwxMiAxMiIgc3Ryb2tlPSIjZjBiODRhIiBzdHJva2Utd2lkdGg9IjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xNCAyMGgxMk0yMCAxNHYxMiIgc3Ryb2tlPSIjZjBiODRhIiBzdHJva2Utd2lkdGg9IjIuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PC9zdmc+">
+<meta name="theme-color" content="#0f1218">
+<style>
+:root{--bg:#0f1218;--card:#1a1f2a;--card2:#212736;--line:#2d3547;--ink:#ece8dc;--mute:#9aa3b5;--amber:#f0b84a;--green:#5cc08e;--red:#e2645d;--r:14px}
+*{box-sizing:border-box}
+html{color-scheme:dark}
+body{margin:0;min-height:100vh;color:var(--ink);background:radial-gradient(900px 500px at 15% -10%,#222b3f 0,transparent 60%),radial-gradient(700px 400px at 100% 0,#2a2233 0,transparent 55%),var(--bg);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+.wrap{max-width:1040px;margin:0 auto;padding:20px 16px 56px}
+header.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.brand{display:flex;align-items:center;gap:12px}
+.brand svg{width:42px;height:42px;flex:none}
+.brand h1{margin:0;font:700 26px/1 Georgia,"Times New Roman",serif;letter-spacing:.22em;color:var(--amber)}
+.brand p{margin:5px 0 0;color:var(--mute);font-size:13px}
+.total{color:var(--mute);font-size:14px}
+.total b{color:var(--amber);font-size:20px;margin-left:4px}
+.tabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:16px}
+.tab{flex:1 0 auto;min-width:112px;text-align:left;background:var(--card);border:1px solid var(--line);color:var(--ink);border-radius:12px;padding:9px 14px;cursor:pointer;font:inherit;line-height:1.35}
+.tab small{display:block;color:var(--mute);font-size:12px}
+.tab .st{color:var(--amber);letter-spacing:2px;font-size:12px;min-height:16px;display:block}
+.tab.on{border-color:var(--amber);box-shadow:0 0 0 1px var(--amber) inset}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px 18px 16px;margin-bottom:16px}
+.card h2{margin:0 0 6px;font:700 24px/1.2 Georgia,serif}
+.card h3{margin:0 0 10px;font-size:17px;letter-spacing:.02em}
+.card h4{margin:0 0 6px;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--mute)}
+.card h4 small{text-transform:none;letter-spacing:0}
+.kicker{margin:0 0 4px;color:var(--amber);font-size:12px;letter-spacing:.14em;text-transform:uppercase}
+.mute{color:var(--mute)}
+.small{font-size:13px}
+.board{display:grid;gap:0 20px;grid-template-columns:minmax(0,1fr)}
+@media(min-width:900px){.board{grid-template-columns:minmax(0,5fr) minmax(0,6fr)}}
+details.how{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:12px 18px;margin-bottom:16px}
+details.how summary{cursor:pointer;font-weight:600}
+details.how ul{margin:10px 0 4px;padding-left:20px}
+details.how li{margin:4px 0}
+.cast{display:grid;gap:14px}
+.chips{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.chips li{background:var(--card2);border:1px solid var(--line);border-radius:999px;padding:3px 12px;font-size:14px}
+.chips li b{margin-left:8px;padding-left:8px;border-left:1px solid var(--line);color:var(--amber);font-family:ui-monospace,Menlo,Consolas,monospace}
+ol.clues{margin:0;padding:0;list-style:none;counter-reset:c}
+ol.clues li{counter-increment:c;margin:0 0 8px}
+.clue{width:100%;text-align:left;background:var(--card2);border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:9px 12px 9px 40px;font:inherit;cursor:pointer;position:relative}
+.clue::before{content:counter(c);position:absolute;left:10px;top:9px;width:22px;height:22px;border-radius:50%;background:var(--amber);color:#1a1405;font-weight:700;font-size:13px;display:grid;place-items:center}
+.clue.done{opacity:.5;text-decoration:line-through}
+.finalclue{margin-top:10px;border:1px dashed var(--amber);border-radius:10px;padding:10px 12px;background:rgba(240,184,74,.07)}
+.finalclue .tag{display:block;color:var(--amber);font-size:12px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:2px}
+.hint{background:var(--card2);border-left:3px solid var(--amber);border-radius:6px;padding:8px 12px;margin:0 0 8px}
+.btn{font:inherit;font-weight:600;border-radius:10px;padding:9px 16px;cursor:pointer;border:1px solid var(--amber);background:var(--amber);color:#1a1405}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent;color:var(--amber)}
+.btn.sm{padding:5px 11px;font-size:13px}
+.toolbar{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between;margin-bottom:8px}
+.toolbar label{font-size:14px;display:flex;gap:8px;align-items:center;cursor:pointer}
+.gridblock{margin-top:14px}
+.gridwrap{overflow-x:auto;padding-bottom:4px}
+table.grid{border-collapse:separate;border-spacing:3px;margin:0}
+table.grid th{font-weight:500;font-size:11px;color:var(--mute);text-align:center;padding:2px 2px 4px;min-width:58px;line-height:1.25}
+table.grid th[scope=row]{text-align:right;min-width:92px;padding-right:8px;font-size:12.5px;color:var(--ink)}
+.lab b{display:block;color:var(--amber);font:600 12px ui-monospace,Menlo,Consolas,monospace}
+th[scope=row] .lab b{display:inline;margin-left:6px}
+.cell{width:52px;height:40px;border-radius:8px;border:1px solid var(--line);background:var(--card2);color:var(--ink);font-size:18px;cursor:pointer;display:block;margin:0 auto}
+.cell:hover{border-color:var(--mute)}
+.cell.s1{color:var(--red);background:rgba(226,100,93,.1)}
+.cell.s2{color:#0d2418;background:var(--green);border-color:var(--green);font-weight:700}
+.answer{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin:10px 0 14px}
+.answer label{display:grid;gap:4px;font-size:13px;color:var(--mute)}
+select{font:inherit;color:var(--ink);background:var(--card2);border:1px solid var(--line);border-radius:8px;padding:8px}
+.msg{min-height:1.5em;margin:10px 0 0;color:var(--red)}
+.shake{animation:shake .35s}
+@keyframes shake{20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+.reveal{border-color:var(--green);background:linear-gradient(180deg,rgba(92,192,142,.1),transparent 60%),var(--card)}
+.reveal .kicker{color:var(--green)}
+.stars{color:var(--amber);font-size:22px;letter-spacing:4px;margin:4px 0 10px}
+.ending{font-style:italic}
+.reveal ol{padding-left:22px}
+.case-tools{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.refresh{display:inline-flex;align-items:center;gap:8px}
+.refresh svg{width:16px;height:16px;transition:transform .35s}
+.refresh:hover svg{transform:rotate(90deg)}
+.notes textarea{width:100%;min-height:110px;resize:vertical;background:var(--card2);border:1px solid var(--line);border-radius:10px;color:var(--ink);font:inherit;padding:10px 12px}
+.notes summary{cursor:pointer;font-weight:600;color:var(--amber)}
+.reveal li{margin:5px 0}
+table.sol{border-collapse:collapse;width:100%;font-size:14px;margin:8px 0 14px}
+table.sol th,table.sol td{border-bottom:1px solid var(--line);padding:5px 8px;text-align:left}
+table.sol tr.k td,table.sol tr.k th{color:var(--green);font-weight:700}
+footer{margin-top:28px;text-align:center;color:var(--mute);font-size:13px}
+footer button{background:none;border:0;color:var(--mute);text-decoration:underline;cursor:pointer;font:inherit}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="20" cy="20" r="12" fill="none" stroke="#f0b84a" stroke-width="3.5"/><path d="M29 29l12 12" stroke="#f0b84a" stroke-width="5" stroke-linecap="round"/><path d="M14 20h12M20 14v12" stroke="#f0b84a" stroke-width="2.5" stroke-linecap="round"/></svg>
+      <div><h1>DEDUTIVO</h1><p>Detetive de lógica matemática</p></div>
+    </div>
+    <div class="total" id="total"></div>
+  </header>
+  <main id="app"></main>
+  <footer>Dedutivo · puzzles de dedução em grade · <button id="wipe" type="button">apagar progresso</button></footer>
+</div>
+
+<script>
+/*DATA-START*/
+// Cada caso: suspeitos (índices 0..n-1), armas (peso), cômodos (número).
+// Pistas: f(S) recebe S[i] = {w: peso da arma, r: número do cômodo} do suspeito i.
+// Pista final: killer.f(p, S) é verdadeira para exatamente um suspeito.
+const CASES = [
+  {
+    level: "Aprendiz",
+    title: "O Primeiro Palpite",
+    intro: "Noite de aniversário na Mansão Euler. O Professor Moebius foi encontrado sem vida no meio da festa, e só três convidados estavam na casa. Você chega com caderno, lupa e uma calculadora. Cada suspeito esteve sozinho num cômodo, com uma arma. Descubra quem foi.",
+    suspects: ["Ana", "Bruno", "Carla"],
+    weapons: [{n:"Corda",v:1},{n:"Faca",v:2},{n:"Castiçal",v:3}],
+    rooms: [{n:"Biblioteca",v:1},{n:"Cozinha",v:2},{n:"Jardim",v:3}],
+    clues: [
+      {t:"Para Bruno, o peso da arma somado ao número do cômodo dá 3.", f:S=>S[1].w+S[1].r===3},
+      {t:"Para Carla, o peso da arma multiplicado pelo número do cômodo dá 3.", f:S=>S[2].w*S[2].r===3},
+      {t:"Ana estava num cômodo de número ímpar.", f:S=>S[0].r%2===1}
+    ],
+    killer: {t:"O crime aconteceu no único cômodo cujo número é primo e par.", f:p=>p.r===2},
+    hints: [
+      "Comece pela pista com menos possibilidades: quais pares (peso, cômodo) têm produto 3?",
+      "Bruno só pode ser (peso 1, cômodo 2) ou (peso 2, cômodo 1). Teste cada combinação contra a pista 3."
+    ],
+    explain: [
+      "Pista 2: os únicos pares com produto 3 são (peso 1, cômodo 3) e (peso 3, cômodo 1). Carla está num deles.",
+      "Pista 1: Bruno só pode ser (peso 1, cômodo 2) ou (peso 2, cômodo 1).",
+      "Testando as combinações, a única em que ninguém repete arma ou cômodo e Ana fica num cômodo ímpar é: Bruno (Corda, Cozinha), Carla (Castiçal, Biblioteca) e Ana (Faca, Jardim).",
+      "Pista final: o único número primo e par é o 2, que é a Cozinha. Logo, o culpado é Bruno."
+    ],
+    ending: "Bruno achou que a Cozinha era um álibi perfeito. Só esqueceu que o 2 é o único primo par, e que o detetive carrega uma calculadora."
+  },
+  {
+    level: "Investigador",
+    title: "A Soma dos Medos",
+    intro: "Quatro suspeitos, quatro armas e quatro cômodos. Desta vez as pistas misturam soma, produto, paridade e comparação de pesos. Anote tudo no caderno: o que uma pista descarta costuma ser o que destrava a outra.",
+    suspects: ["Diana", "Érico", "Fábio", "Gabi"],
+    weapons: [{n:"Corda",v:1},{n:"Faca",v:4},{n:"Veneno",v:6},{n:"Castiçal",v:9}],
+    rooms: [{n:"Biblioteca",v:1},{n:"Cozinha",v:2},{n:"Jardim",v:3},{n:"Porão",v:4}],
+    clues: [
+      {t:"Para Fábio, o peso da arma somado ao número do cômodo dá 10.", f:S=>S[2].w+S[2].r===10},
+      {t:"Para Gabi, o peso da arma multiplicado pelo número do cômodo dá 8.", f:S=>S[3].w*S[3].r===8},
+      {t:"Érico esteve num cômodo de número ímpar.", f:S=>S[1].r%2===1},
+      {t:"Fábio não usou o Veneno.", f:S=>S[2].w!==6},
+      {t:"A arma de Diana é mais pesada que a de Érico.", f:S=>S[0].w>S[1].w}
+    ],
+    killer: {t:"O culpado é o único cujo peso da arma dividido pelo número do cômodo dá um número inteiro e ímpar.", f:p=>p.w%p.r===0&&(p.w/p.r)%2===1},
+    hints: [
+      "A pista 2 resolve um suspeito inteiro: qual arma e qual cômodo multiplicam 8?",
+      "Gabi usou a Faca na Cozinha. Agora a pista 1 deixa Fábio com duas opções, e a pista 4 elimina uma delas."
+    ],
+    explain: [
+      "Pista 2: 8 = 4 × 2, então Gabi usou a Faca (4) na Cozinha (2).",
+      "Pista 1: Fábio é (peso 6, cômodo 4) ou (peso 9, cômodo 1). A pista 4 diz que Fábio não usou o Veneno (6), então ele usou o Castiçal (9) na Biblioteca (1).",
+      "Sobram os cômodos 3 e 4. Pela pista 3, Érico está num ímpar: o Jardim (3). Diana fica com o Porão (4).",
+      "Sobram a Corda (1) e o Veneno (6). Pela pista 5, Diana tem a arma mais pesada: o Veneno. Érico fica com a Corda.",
+      "Pista final: Fábio 9 ÷ 1 = 9 (ímpar, inteiro). Gabi: 4 ÷ 2 = 2 (par). Diana: 6 ÷ 4 e Érico: 1 ÷ 3 não são inteiros. O culpado é Fábio."
+    ],
+    ending: "Fábio tentou se esconder entre as estantes, mas 9 ÷ 1 é o tipo de divisão que não deixa dúvidas."
+  },
+  {
+    level: "Perito",
+    title: "O Cofre do Professor",
+    intro: "O cofre do escritório foi arrombado, e o dono não sobreviveu para contar a história. As armas agora são ferramentas de sala de aula, e a numeração dos cômodos começa no 2. As pistas exigem cruzar duas informações antes de tirar qualquer conclusão.",
+    suspects: ["Hugo", "Iara", "Jonas", "Lia"],
+    weapons: [{n:"Régua",v:2},{n:"Compasso",v:3},{n:"Esquadro",v:5},{n:"Calculadora",v:7}],
+    rooms: [{n:"Observatório",v:2},{n:"Cozinha",v:3},{n:"Biblioteca",v:4},{n:"Adega",v:5}],
+    clues: [
+      {t:"A soma dos números dos cômodos de Hugo e Iara é 9.", f:S=>S[0].r+S[1].r===9},
+      {t:"A diferença entre os pesos das armas de Hugo e Iara é 3.", f:S=>Math.abs(S[0].w-S[1].w)===3},
+      {t:"Para Lia, o peso da arma multiplicado pelo número do cômodo dá 6.", f:S=>S[3].w*S[3].r===6},
+      {t:"Hugo não esteve na Adega.", f:S=>S[0].r!==5},
+      {t:"A arma de Iara é mais leve que a de Hugo.", f:S=>S[1].w<S[0].w}
+    ],
+    killer: {t:"O culpado é quem tem a maior soma entre o peso da arma e o número do cômodo.", f:(p,S)=>S.every(q=>q===p||q.w+q.r<p.w+p.r)},
+    hints: [
+      "As pistas 1 e 2 trabalham em dupla: elas separam os suspeitos em dois grupos de cômodos e dois grupos de armas.",
+      "Hugo e Iara ficam com Biblioteca/Adega e Régua/Esquadro. Use a pista 3 para fechar Lia e, por exclusão, Jonas."
+    ],
+    explain: [
+      "Pista 1: dois cômodos distintos entre 2, 3, 4 e 5 que somam 9 só podem ser 4 e 5. Hugo e Iara estão na Biblioteca e na Adega. Jonas e Lia, no Observatório e na Cozinha.",
+      "Pista 2: dois pesos que diferem em 3 só podem ser 2 e 5. Hugo e Iara usaram a Régua e o Esquadro. Jonas e Lia, o Compasso e a Calculadora.",
+      "Pista 3: 6 = 3 × 2, então Lia usou o Compasso (3) no Observatório (2). Jonas ficou com a Calculadora (7) na Cozinha (3).",
+      "Pista 4: Hugo não estava na Adega, então Hugo foi para a Biblioteca (4) e Iara para a Adega (5). Pista 5: Iara tem a arma mais leve, ou seja, a Régua. Hugo ficou com o Esquadro.",
+      "Pista final: as somas são Hugo 5+4=9, Iara 2+5=7, Jonas 7+3=10 e Lia 3+2=5. A maior é a de Jonas."
+    ],
+    ending: "Jonas achou que uma calculadora faria o crime sumir. Mas quem somou tudo foi o detetive, e a maior soma foi a dele."
+  },
+  {
+    level: "Mestre",
+    title: "O Último Teorema",
+    intro: "Cinco suspeitos, cinco armas, cinco cômodos. A mansão está em silêncio, e o único som é o da sua caneta riscando possibilidades. Aqui aparecem pistas condicionais (\"se… então…\"), e às vezes o mais útil é descobrir o que não pode ser verdade.",
+    suspects: ["Marta", "Nilo", "Otávio", "Paula", "Rui"],
+    weapons: [{n:"Corda",v:1},{n:"Faca",v:3},{n:"Veneno",v:4},{n:"Castiçal",v:6},{n:"Marreta",v:8}],
+    rooms: [{n:"Sótão",v:1},{n:"Cozinha",v:2},{n:"Biblioteca",v:3},{n:"Porão",v:4},{n:"Jardim",v:5}],
+    clues: [
+      {t:"A soma dos pesos das armas de Marta e Paula é 9.", f:S=>S[0].w+S[3].w===9},
+      {t:"O produto dos números dos cômodos de Marta e Rui é 6.", f:S=>S[0].r*S[4].r===6},
+      {t:"Rui esteve num cômodo de número ímpar.", f:S=>S[4].r%2===1},
+      {t:"Nilo e Otávio estiveram em cômodos de números consecutivos.", f:S=>Math.abs(S[1].r-S[2].r)===1},
+      {t:"O peso da arma de Rui é igual ao número do seu cômodo mais 1.", f:S=>S[4].w===S[4].r+1},
+      {t:"A arma de Nilo é a mais leve de todas.", f:S=>S.every(q=>S[1].w<=q.w)},
+      {t:"Marta usou uma arma mais pesada que a de Paula.", f:S=>S[0].w>S[3].w},
+      {t:"Se Nilo esteve no cômodo 4, então Otávio usou a arma de peso 1.", f:S=>S[1].r!==4||S[2].w===1}
+    ],
+    killer: {t:"O peso da arma do culpado é exatamente o dobro do número do cômodo onde ele esteve.", f:p=>p.w===2*p.r},
+    hints: [
+      "Comece pelos cômodos: as pistas 2 e 3 fecham Marta e Rui.",
+      "Depois da pista 4, Paula fica sozinha no Sótão. Siga pelas pistas de peso (5 e 6) e deixe a pista 8 por último."
+    ],
+    explain: [
+      "Pista 2: dois cômodos de 1 a 5 com produto 6 só podem ser 2 e 3. Pela pista 3, Rui está no ímpar: Biblioteca (3). Marta fica na Cozinha (2).",
+      "Pista 4: sobram os cômodos 1, 4 e 5, e os consecutivos são 4 e 5. Nilo e Otávio ocupam o Porão e o Jardim, e Paula fica no Sótão (1).",
+      "Pista 5: o peso de Rui é 3 + 1 = 4, o Veneno. Pista 6: Nilo tem a arma mais leve, a Corda (1).",
+      "Pista 1: restam os pesos 3, 6 e 8. Marta e Paula somam 9 com 3 e 6, então Otávio ficou com a Marreta (8). Pista 7: Marta tem o Castiçal (6) e Paula a Faca (3).",
+      "Pista 8: se Nilo estivesse no cômodo 4, Otávio teria que ter o peso 1, mas esse peso é do Nilo. Então Nilo não está no 4: ele está no Jardim (5) e Otávio no Porão (4).",
+      "Pista final: só Otávio tem peso igual ao dobro do cômodo (8 = 2 × 4)."
+    ],
+    ending: "Otávio contava com a confusão de cinco álibis. Esqueceu que oito é o dobro de quatro, e que um detetive de lógica faz conta de cabeça."
+  }
+];
+
+function permutations(n){
+  const res=[], a=[...Array(n).keys()];
+  (function p(k){
+    if(k===n){ res.push(a.slice()); return; }
+    for(let i=k;i<n;i++){ [a[k],a[i]]=[a[i],a[k]]; p(k+1); [a[k],a[i]]=[a[i],a[k]]; }
+  })(0);
+  return res;
+}
+function solve(c){
+  const n=c.suspects.length, P=permutations(n), out=[];
+  for(const pw of P) for(const pr of P){
+    const S=pw.map((w,i)=>({w:c.weapons[w].v, r:c.rooms[pr[i]].v}));
+    if(c.clues.every(cl=>cl.f(S))) out.push({pw,pr,S});
+  }
+  return out;
+}
+/*DATA-END*/
+
+// ---------- preparação: solução de cada caso (calculada, não escrita à mão) ----------
+CASES.forEach(c=>{
+  const sols=solve(c);
+  if(sols.length!==1) console.warn("Caso sem solução única:", c.title, sols.length);
+  c.sol=sols[0];
+  c.sol.culprit=c.sol.S.findIndex(p=>c.killer.f(p,c.sol.S));
+  c.size=c.suspects.length;
+});
+
+// ---------- utilidades ----------
+const $=(s,el=document)=>el.querySelector(s);
+function h(tag,attrs={},...kids){
+  const e=document.createElement(tag);
+  for(const [k,v] of Object.entries(attrs||{})){
+    if(k==="class") e.className=v;
+    else if(k.startsWith("on")) e.addEventListener(k.slice(2),v);
+    else if(k==="checked"||k==="disabled") e[k]=v;
+    else e.setAttribute(k,v);
+  }
+  for(const kid of kids.flat()){
+    if(kid==null||kid===false) continue;
+    e.append(kid.nodeType?kid:document.createTextNode(String(kid)));
+  }
+  return e;
+}
+
+// ---------- progresso salvo ----------
+const KEY="dedutivo.v1";
+let save;
+try{ save=JSON.parse(localStorage.getItem(KEY)); }catch(e){ save=null; }
+if(!save||typeof save!=="object") save={};
+save.cases=save.cases||{}; if(save.auto===undefined) save.auto=true; if(save.current===undefined) save.current=0;
+function persist(){ try{ localStorage.setItem(KEY,JSON.stringify(save)); }catch(e){} }
+function caseState(i){
+  if(!save.cases[i]){
+    const n=CASES[i].size, mk=()=>Array.from({length:n},()=>Array(n).fill(0));
+    save.cases[i]={g:[mk(),mk(),mk()],struck:[],errors:0,hints:0,solved:false,stars:0,answer:["","",""],notes:""};
+  }
+  return save.cases[i];
+}
+let cur=Math.min(Math.max(+save.current||0,0),CASES.length-1);
+
+const GRIDS=[
+  {rows:"suspects",cols:"weapons",title:"Suspeitos × Armas"},
+  {rows:"suspects",cols:"rooms",title:"Suspeitos × Cômodos"},
+  {rows:"weapons",cols:"rooms",title:"Armas × Cômodos"}
+];
+function items(c,kind){ return kind==="suspects"?c.suspects.map(n=>({n})):c[kind]; }
+function lab(it){ return h("span",{class:"lab"},it.n,it.v!=null?h("b",{},it.v):null); }
+function starStr(n){ return "★".repeat(n)+"☆".repeat(3-n); }
+
+// ---------- componentes ----------
+function renderTop(){
+  const total=CASES.reduce((s,_,i)=>s+((save.cases[i]&&save.cases[i].solved)?save.cases[i].stars:0),0);
+  $("#total").replaceChildren("Estrelas ",h("b",{},`${total}/${CASES.length*3}`));
+}
+function renderTabs(){
+  return h("nav",{class:"tabs","aria-label":"Casos"},CASES.map((c,i)=>{
+    const st=save.cases[i];
+    return h("button",{class:"tab"+(i===cur?" on":""),"aria-current":i===cur?"true":"false",onclick:()=>{cur=i;save.current=i;persist();render();}},
+      `Caso ${i+1}`,h("small",{},c.level),
+      h("span",{class:"st"},st&&st.solved?starStr(st.stars):""));
+  }));
+}
+function howTo(){
+  const anyProgress=Object.keys(save.cases).length>0;
+  const d=h("details",{class:"how"},
+    h("summary",{},"Como jogar"),
+    h("ul",{},
+      h("li",{},"Cada suspeito usou ",h("b",{},"uma arma")," em ",h("b",{},"um cômodo"),". Nenhuma arma nem cômodo se repete."),
+      h("li",{},"Armas têm um ",h("b",{},"peso")," e cômodos têm um ",h("b",{},"número"),". As pistas usam soma, produto, diferença, paridade, divisão e comparações."),
+      h("li",{},"No caderno, toque numa casa para marcar ✗ (descartado), depois ✓ (confirmado). Cruze os três quadros: se Ana usou a Faca e a Faca esteve na Cozinha, então Ana esteve na Cozinha."),
+      h("li",{},"Resolva as pistas numeradas e use a ",h("b",{},"pista final")," para apontar o culpado. Depois acuse: suspeito, arma e cômodo."),
+      h("li",{},"3 estrelas para quem resolve sem erros e sem dicas.")
+    ));
+  if(!anyProgress) d.open=true;
+  return d;
+}
+function castCard(c){
+  return h("section",{class:"card"},h("h3",{},"Elenco"),
+    h("div",{class:"cast"},
+      h("div",{},h("h4",{},"Suspeitos"),h("ul",{class:"chips"},c.suspects.map(n=>h("li",{},n)))),
+      h("div",{},h("h4",{},"Armas ",h("small",{},"(peso)")),h("ul",{class:"chips"},c.weapons.map(w=>h("li",{},w.n,h("b",{},w.v))))),
+      h("div",{},h("h4",{},"Cômodos ",h("small",{},"(número)")),h("ul",{class:"chips"},c.rooms.map(r=>h("li",{},r.n,h("b",{},r.v)))))
+    ));
+}
+function cluesCard(c,st){
+  const ol=h("ol",{class:"clues"});
+  c.clues.forEach((cl,i)=>{
+    const on=st.struck.includes(i);
+    const b=h("button",{type:"button",class:"clue"+(on?" done":""),"aria-pressed":String(on),
+      title:"Toque para riscar a pista quando já tiver usado",
+      onclick:()=>{
+        const k=st.struck.indexOf(i);
+        if(k>=0) st.struck.splice(k,1); else st.struck.push(i);
+        persist(); b.classList.toggle("done",k<0); b.setAttribute("aria-pressed",String(k<0));
+      }},cl.t);
+    ol.append(h("li",{},b));
+  });
+  return h("section",{class:"card"},h("h3",{},"Pistas"),ol,
+    h("div",{class:"finalclue"},h("span",{class:"tag"},"Pista final"),c.killer.t),
+    h("p",{class:"mute small"},"Toque numa pista para riscá-la quando já tiver usado."));
+}
+function hintCard(c,st){
+  const box=h("section",{class:"card"});
+  const draw=()=>{
+    box.replaceChildren(h("h3",{},"Dicas"));
+    if(st.hints>0) c.hints.slice(0,st.hints).forEach(t=>box.append(h("p",{class:"hint"},t)));
+    else box.append(h("p",{class:"mute small"},"Travou? Cada caso tem até 2 dicas. Usar dicas custa 1 estrela."));
+    if(!st.solved&&st.hints<c.hints.length)
+      box.append(h("button",{type:"button",class:"btn ghost sm",onclick:()=>{st.hints++;persist();draw();}},st.hints?"Outra dica":"Pedir dica"));
+  };
+  draw();
+  return box;
+}
+function gridsCard(c,st){
+  const host=h("div");
+  const draw=(focus)=>{
+    host.replaceChildren();
+    GRIDS.forEach((g,gi)=>{
+      const rows=items(c,g.rows), cols=items(c,g.cols);
+      const thead=h("thead",{},h("tr",{},h("th",{class:"corner"}),cols.map(ci=>h("th",{scope:"col"},lab(ci)))));
+      const tbody=h("tbody");
+      rows.forEach((ri,r)=>{
+        const tr=h("tr",{},h("th",{scope:"row"},lab(ri)));
+        cols.forEach((ci,k)=>{
+          const v=st.g[gi][r][k];
+          const state=v===1?"descartado":v===2?"confirmado":"vazio";
+          tr.append(h("td",{},h("button",{type:"button",class:"cell s"+v,"data-pos":`${gi}-${r}-${k}`,
+            "aria-label":`${ri.n} e ${ci.n}: ${state}`,onclick:()=>cycle(gi,r,k)},v===1?"✗":v===2?"✓":"")));
+        });
+        tbody.append(tr);
+      });
+      host.append(h("div",{class:"gridblock"},h("h4",{},g.title),h("div",{class:"gridwrap"},h("table",{class:"grid"},thead,tbody))));
+    });
+    if(focus){ const el=host.querySelector(`[data-pos="${focus}"]`); if(el) el.focus(); }
+  };
+  function cycle(gi,r,k){
+    const grid=st.g[gi], nv=(grid[r][k]+1)%3;
+    grid[r][k]=nv;
+    if(nv===2&&save.auto){
+      grid[r].forEach((_,j)=>{ if(j!==k&&grid[r][j]===0) grid[r][j]=1; });
+      grid.forEach((row,i)=>{ if(i!==r&&row[k]===0) row[k]=1; });
+    }
+    persist(); draw(`${gi}-${r}-${k}`);
+  }
+  draw();
+  const auto=h("input",{type:"checkbox",checked:!!save.auto,onchange:e=>{save.auto=e.target.checked;persist();}});
+  return h("section",{class:"card"},h("h3",{},"Caderno de dedução"),
+    h("div",{class:"toolbar"},
+      h("label",{},auto,"Marcar ✗ automaticamente ao confirmar ✓"),
+      h("button",{type:"button",class:"btn ghost sm",onclick:()=>{
+        const n=c.size, mk=()=>Array.from({length:n},()=>Array(n).fill(0));
+        st.g=[mk(),mk(),mk()]; st.struck=[]; persist(); render();
+      }},"Limpar caderno")),
+    h("p",{class:"mute small"},"Toque numa casa: ✗ (descartado) → ✓ (confirmado) → vazio."),
+    host);
+}
+function answerCard(c,st){
+  const card=h("section",{class:"card"},h("h3",{},"Acusação"));
+  const msg=h("p",{class:"msg",role:"status","aria-live":"polite"});
+  const mk=(label,opts,key)=>{
+    const s=h("select",{"aria-label":label},h("option",{value:""},"—"),opts.map((o,i)=>h("option",{value:String(i)},o)));
+    s.value=st.answer[key];
+    s.addEventListener("change",()=>{st.answer[key]=s.value;persist();});
+    return h("label",{},label,s);
+  };
+  card.append(
+    h("div",{class:"answer"},
+      mk("Quem",c.suspects,0),
+      mk("Com qual arma",c.weapons.map(w=>`${w.n} (${w.v})`),1),
+      mk("Em qual cômodo",c.rooms.map(r=>`${r.n} (${r.v})`),2)),
+    h("button",{type:"button",class:"btn",onclick:()=>{
+      if(st.answer.some(a=>a==="")){ msg.textContent="Escolha suspeito, arma e cômodo antes de acusar."; return; }
+      const [s,w,r]=st.answer.map(Number), k=c.sol.culprit;
+      const hits=[s===k,w===c.sol.pw[k],r===c.sol.pr[k]].filter(Boolean).length;
+      if(hits===3){
+        st.solved=true; st.stars=Math.max(1,3-(st.errors>0?1:0)-(st.hints>0?1:0));
+        persist(); render(); window.scrollTo(0,0);
+      }else{
+        st.errors++; persist();
+        msg.textContent=`Acusação incorreta: ${hits} de 3 elementos corretos. Revise as pistas e tente de novo.`;
+        card.classList.remove("shake"); void card.offsetWidth; card.classList.add("shake");
+      }
+    }},"Acusar"),
+    msg);
+  return card;
+}
+function revealCard(c,st){
+  const k=c.sol.culprit;
+  const rows=c.suspects.map((n,i)=>h("tr",{class:i===k?"k":""},
+    h("th",{scope:"row"},n),h("td",{},`${c.weapons[c.sol.pw[i]].n} (${c.weapons[c.sol.pw[i]].v})`),h("td",{},`${c.rooms[c.sol.pr[i]].n} (${c.rooms[c.sol.pr[i]].v})`)));
+  const card=h("section",{class:"card reveal"},
+    h("p",{class:"kicker"},"Caso encerrado"),
+    h("h3",{},`${c.suspects[k]} é o culpado!`),
+    h("p",{},`${c.suspects[k]} usou ${c.weapons[c.sol.pw[k]].n} em ${c.rooms[c.sol.pr[k]].n}.`),
+    h("p",{class:"ending"},c.ending),
+    h("div",{class:"stars","aria-label":`${st.stars} de 3 estrelas`},starStr(st.stars)),
+    h("h4",{},"Quem fez o quê"),
+    h("table",{class:"sol"},h("thead",{},h("tr",{},h("th",{},"Suspeito"),h("th",{},"Arma"),h("th",{},"Cômodo"))),h("tbody",{},rows)),
+    h("h4",{},"A dedução completa"),
+    h("ol",{},c.explain.map(t=>h("li",{},t))));
+  if(cur<CASES.length-1) card.append(h("button",{type:"button",class:"btn",onclick:()=>{cur++;save.current=cur;persist();render();window.scrollTo(0,0);}},"Próximo caso →"));
+  else card.append(h("p",{class:"mute"},"Você resolveu todos os casos. Dedutivo é seu, detetive."));
+  return card;
+}
+// Banco de histórias alternativas por nível. Cada variante reutiliza o molde lógico
+// do nível, mas recebe cenário, elenco, objetos e narrativa próprios.
+const STORY_VARIANTS = [
+  [
+    {title:"O Relógio da Estação",intro:"Durante a inauguração da Estação Meridian, o relojoeiro-chefe foi encontrado morto na sala de controle. Três funcionários estiveram no local, cada um com uma ferramenta e em um ambiente distinto. Descubra quem sabotou a inauguração.",suspects:["Lia","Caio","Bento"],weapons:["Chave inglesa","Estilete","Peso de relógio"],rooms:["Bilheteria","Oficina","Plataforma"]},
+    {title:"O Incidente no Aquário",intro:"Na noite de uma visita exclusiva, o curador do Aquário Azul foi encontrado morto. Três membros da equipe estavam no prédio. Cruze as ferramentas e os setores para descobrir quem cometeu o crime.",suspects:["Nara","Davi","Íris"],weapons:["Gancho","Bisturi","Frasco tóxico"],rooms:["Coralário","Laboratório","Sala das bombas"]},
+    {title:"O Enigma do Observatório",intro:"Uma falha inexplicável interrompeu a sessão astronômica, e o diretor foi encontrado sem vida. Três técnicos tinham acesso a equipamentos e setores diferentes. Use as pistas matemáticas para identificar o culpado.",suspects:["Milo","Tânia","Rosa"],weapons:["Cabo","Lâmina","Contrapeso"],rooms:["Cúpula","Arquivo","Terraço"]}
+  ],
+  [
+    {title:"O Roubo no Museu",intro:"Durante uma recepção no Museu das Antiguidades, a peça mais valiosa desapareceu e o segurança foi encontrado morto. Quatro funcionários estiveram em setores distintos. As pistas combinam soma, produto e comparação: descubra quem planejou tudo.",suspects:["Helena","Murilo","Sofia","Tomás"],weapons:["Lanterna pesada","Punhal","Sedativo","Candelabro"],rooms:["Galeria","Reserva","Restauro","Pátio"]},
+    {title:"Mistério no Hotel Neblina",intro:"Na madrugada de um congresso, o gerente do Hotel Neblina foi encontrado morto. Quatro hóspedes e funcionários deixaram rastros numéricos entre quartos e objetos. Cruze as informações para resolver o caso.",suspects:["Cecília","Raul","Bia","Vicente"],weapons:["Corda","Faca de mesa","Ampola","Abajur"],rooms:["Recepção","Suíte","Lavanderia","Cozinha"]},
+    {title:"A Noite do Teatro",intro:"Após o último ato, o diretor do Teatro Íris foi encontrado morto nos bastidores. Quatro integrantes da companhia tinham acesso a objetos e dependências diferentes. As pistas exigem dedução em cadeia.",suspects:["Luna","Artur","Mônica","Estevão"],weapons:["Cabo de cena","Adaga cenográfica","Pó químico","Castiçal"],rooms:["Coxia","Camarim","Oficina","Palco"]}
+  ],
+  [
+    {title:"O Segredo do Farol",intro:"Uma tempestade isolou o Farol de Santa Bruma. Pela manhã, o engenheiro responsável foi encontrado morto. Quatro guardiões, objetos numerados e cômodos incomuns compõem um caso que exige cruzar pistas em dupla.",suspects:["Alda","Noel","Ciro","Vera"],weapons:["Bússola","Alicate","Sinalizador","Chave"],rooms:["Lanterna","Depósito","Sala de mapas","Dormitório"]},
+    {title:"O Cofre da Casa de Leilões",intro:"Na véspera de um leilão raro, o avaliador foi encontrado morto e o cofre violado. Quatro especialistas circularam por salas e ferramentas. A solução depende de combinar restrições antes de calcular quem tinha a maior soma.",suspects:["Eva","Gael","Lídia","Paco"],weapons:["Régua de metal","Compasso","Lupa pesada","Calculadora"],rooms:["Salão","Escritório","Arquivo","Adega"]},
+    {title:"O Código da Mina",intro:"Um geólogo foi encontrado morto numa mina desativada. Quatro exploradores usaram equipamentos distintos em galerias numeradas. As pistas se cruzam: não conclua nada com uma única informação.",suspects:["Ivo","Maia","Téo","Yara"],weapons:["Picareta","Lanterna","Cabo","Medidor"],rooms:["Galeria Norte","Poço","Câmara","Trilho"]}
+  ],
+  [
+    {title:"O Último Baile de Inverno",intro:"Durante um baile numa mansão isolada, a anfitriã foi encontrada morta. Cinco convidados, cinco objetos e cinco aposentos escondem uma sequência de condições e consequências. Só uma dedução cuidadosa revelará o culpado.",suspects:["Amália","Breno","Catarina","Duarte","Estela"],weapons:["Leque metálico","Punhal","Frasco","Castiçal","Bastão"],rooms:["Salão","Sótão","Biblioteca","Jardim","Adega"]},
+    {title:"A Expedição Perdida",intro:"Após o retorno incompleto de uma expedição, o líder foi encontrado morto no acampamento. Cinco integrantes estiveram em locais distintos com equipamentos diferentes. As pistas condicionais e as relações numéricas formam um desafio de mestre.",suspects:["Zélia","Otto","Ravi","Nina","Léo"],weapons:["Corda","Machadinha","Soro","Marreta","Bússola"],rooms:["Barraca","Ravina","Caverna","Ponte","Mirante"]},
+    {title:"O Manuscrito de Cinzas",intro:"Num arquivo histórico, o guardião de um manuscrito desaparecido foi encontrado morto. Cinco pesquisadores, cinco instrumentos e cinco salas: algumas pistas só valem se outra condição for verdadeira. Descubra quem ocultou a verdade.",suspects:["Dora","Ítalo","Salma","Ulisses","Vítor"],weapons:["Estilete","Peso de papel","Frasco","Castiçal","Martelo"],rooms:["Arquivo","Laboratório","Galeria","Depósito","Gabinete"]}
+  ]
+];
+const variantPick={};
+const variants={};
+function makeStoryVariant(levelIndex){
+  const choices=STORY_VARIANTS[levelIndex]||[];
+  if(!choices.length) return CASES[levelIndex];
+  let pick=Math.floor(Math.random()*choices.length);
+  if(choices.length>1&&pick===variantPick[levelIndex]) pick=(pick+1)%choices.length;
+  variantPick[levelIndex]=pick;
+  const base=CASES[levelIndex], story=choices[pick];
+  // preserve the exact puzzle rules, values, hint/explanation integrity and difficulty;
+  // change narrative, character/object/place labels only.
+  const c={...base,title:story.title,intro:story.intro,
+    suspects:story.suspects.slice(),
+    weapons:base.weapons.map((x,i)=>({...x,n:story.weapons[i]})),
+    rooms:base.rooms.map((x,i)=>({...x,n:story.rooms[i]}))};
+  // Atualiza os nomes citados no texto das pistas/dicas/solução para combinar
+  // com o novo elenco e cenário, sem alterar as funções lógicas das pistas.
+  const replacements=[];
+  base.suspects.forEach((name,i)=>replacements.push([name,c.suspects[i]]));
+  base.weapons.forEach((item,i)=>replacements.push([item.n,c.weapons[i].n]));
+  base.rooms.forEach((item,i)=>replacements.push([item.n,c.rooms[i].n]));
+  const rewrite=t=>replacements.reduce((out,[from,to])=>out.split(from).join(to),t);
+  c.clues=base.clues.map(cl=>({...cl,t:rewrite(cl.t)}));
+  c.hints=base.hints.map(rewrite);
+  c.explain=base.explain.map(rewrite);
+  c.ending=rewrite(base.ending);
+  c.sol=base.sol; c.size=c.suspects.length;
+  return c;
+}
+function refreshCase(){
+  variants[cur]=makeStoryVariant(cur);
+  const n=variants[cur].size,mk=()=>Array.from({length:n},()=>Array(n).fill(0));
+  const st=caseState(cur); st.g=[mk(),mk(),mk()];st.struck=[];st.errors=0;st.hints=0;st.solved=false;st.stars=0;st.answer=["","",""];
+  persist();render();
+}
+function renderCase(){
+  const c=variants[cur]||CASES[cur], st=caseState(cur);
+  const root=h("div",{},
+    h("section",{class:"card"},h("div",{class:"case-tools"},h("p",{class:"kicker"},`Caso ${cur+1} · ${c.level} · ${c.size}×${c.size}`),h("button",{type:"button",class:"btn ghost sm refresh",title:"Gerar outra versão deste caso",onclick:refreshCase},h("svg",{viewBox:"0 0 24 24",fill:"none",stroke:"currentColor","stroke-width":"2","stroke-linecap":"round","stroke-linejoin":"round","aria-hidden":"true"},h("path",{d:"M20 7v5h-5"}),h("path",{d:"M4 17a8 8 0 0 0 13.7-5.7L20 12"}),h("path",{d:"M4 7v5h5"}),h("path",{d:"M20 7A8 8 0 0 0 6.3 12.7L4 12"})),"Novo caso")),h("h2",{},c.title),h("p",{},c.intro),h("details",{class:"notes"},h("summary",{},"Abinha de anotações dos investigadores"),h("p",{class:"mute small"},"Registre hipóteses, descartes e dúvidas deste caso. Suas anotações ficam salvas neste navegador."),h("textarea",{"aria-label":"Anotações dos investigadores",placeholder:"Anote aqui suas deduções…",oninput:e=>{st.notes=e.target.value;persist();}},st.notes||""))));
+  if(st.solved) root.append(revealCard(c,st));
+  root.append(h("div",{class:"board"},
+    h("div",{},castCard(c),cluesCard(c,st),hintCard(c,st)),
+    h("div",{},gridsCard(c,st),st.solved?null:answerCard(c,st))));
+  return root;
+}
+function render(){
+  renderTop();
+  const app=$("#app");
+  app.replaceChildren(renderTabs(),howTo(),renderCase());
+}
+$("#wipe").addEventListener("click",()=>{
+  if(!confirm("Apagar todo o progresso e recomeçar?")) return;
+  try{ localStorage.removeItem(KEY); }catch(e){}
+  save={cases:{},auto:true,current:0}; cur=0; render();
+});
+render();
+</script>
+</body>
+</html>
