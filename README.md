@@ -1,4 +1,6 @@
 # 🔎 Dedutivo
+### ⬇️ Download
+[Clique aqui para jogar](https://github.com/thelimacosta/DEDUTIVO/releases/download/1.0.0/dedutivo.html)
 
 **Dedutivo** é um jogo de investigação com lógica matemática em que você assume o papel de detetive. Analise as pistas, preencha as grades de dedução e descubra quem é o culpado, relacionando suspeitos, objetos e locais.
 
@@ -39,16 +41,7 @@ O jogo contém quatro níveis, com desafios de dedução progressivamente mais c
 - JavaScript
 - `localStorage` para persistência local
 
-## Como executar?
-
-O Dedutivo é uma página HTML independente, sem necessidade de instalar dependências.
-
-### Executar localmente
-
-1. Baixe o arquivo.
-2. Abra o arquivo `dedutivo.html` no navegador.
-
-Limpar os dados do navegador ou usar outro navegador/dispositivo pode fazer com que o progresso não esteja disponível. O jogo também possui uma opção para apagar o progresso salvo.
+>Limpar os dados do navegador ou usar outro navegador/dispositivo pode fazer com que o progresso não esteja disponível. O jogo também possui uma opção para apagar o progresso salvo.
 
 ## Licença
 
