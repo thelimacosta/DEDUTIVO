@@ -1,6 +1,6 @@
 # 🔎 Dedutivo
 ### ⬇️ Download
-[Clique aqui para jogar](https://github.com/thelimacosta/DEDUTIVO/releases/download/1.0.0/dedutivo.html)
+[Clique aqui para jogar](https://github.com/thelimacosta/DEDUTIVO/releases/download/1.2.0/dedutivo.html)
 
 **Dedutivo** é um jogo de investigação com lógica matemática em que você assume o papel de detetive. Analise as pistas, preencha as grades de dedução e descubra quem é o culpado, relacionando suspeitos, objetos e locais.
 
