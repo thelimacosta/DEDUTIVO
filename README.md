@@ -37,9 +37,6 @@ O jogo contém quatro níveis, com desafios de dedução progressivamente mais c
 ## Tecnologias
 
 - HTML
-- CSS
-- JavaScript
-- `localStorage` para persistência local
 
 >Limpar os dados do navegador ou usar outro navegador/dispositivo pode fazer com que o progresso não esteja disponível. O jogo também possui uma opção para apagar o progresso salvo.
 
