@@ -29,8 +29,6 @@ As pistas usam aritmética e lógica: negação, conjunção, disjunção, impli
 
 Abra o `dedutivo.html` no navegador. Não precisa instalar nada.
 
-Para instalar como app, publique a pasta do app num site com HTTPS (por exemplo, no GitHub Pages) e use a opção "Instalar app" no navegador.
-
 ---
 
 <div align="center">
