@@ -6,6 +6,8 @@
 <title>Dedutivo</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCI+PHJlY3Qgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByeD0iMTEiIGZpbGw9IiMwZjEyMTgiLz48Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxMiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZjBiODRhIiBzdHJva2Utd2lkdGg9IjMuNSIvPjxwYXRoIGQ9Ik0yOSAyOWwxMiAxMiIgc3Ryb2tlPSIjZjBiODRhIiBzdHJva2Utd2lkdGg9IjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xNCAyMGgxMk0yMCAxNHYxMiIgc3Ryb2tlPSIjZjBiODRhIiBzdHJva2Utd2lkdGg9IjIuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PC9zdmc+">
 <meta name="theme-color" content="#0f1218">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="description" content="Dedutivo: jogo de detetive com lógica matemática.">
 <style>
 :root{--bg:#0f1218;--card:#1a1f2a;--card2:#212736;--line:#2d3547;--ink:#ece8dc;--mute:#9aa3b5;--amber:#f0b84a;--green:#5cc08e;--red:#e2645d;--r:14px}
 *{box-sizing:border-box}
@@ -93,6 +95,196 @@ table.sol tr.k td,table.sol tr.k th{color:var(--green);font-weight:700}
 footer{margin-top:28px;text-align:center;color:var(--mute);font-size:13px}
 footer button{background:none;border:0;color:var(--mute);text-decoration:underline;cursor:pointer;font:inherit}
 @media(prefers-reduced-motion:reduce){*{animation:none!important}}
+
+header.top{position:sticky;top:0;z-index:20;margin:-4px -12px 14px;padding:10px 12px;background:rgba(15,18,24,.82);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.total{display:flex;align-items:center;gap:6px}
+.bar{display:block;width:90px;height:6px;border-radius:9px;background:var(--card2);overflow:hidden;margin-left:6px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--amber),var(--green));transition:width .6s}
+.tab.on{background:linear-gradient(180deg,rgba(240,184,74,.12),var(--card))}
+.btn{transition:transform .1s,filter .15s}.btn:active{transform:scale(.96)}
+.clue{transition:background .15s}.clue:hover{background:#2a3144}
+.cell{transition:background .15s,border-color .15s,transform .1s}.cell:active{transform:scale(.9)}
+.cell.bad{box-shadow:0 0 0 2px var(--red)}
+td.hc .cell.s0,tr.hr .cell.s0{background:rgba(240,184,74,.09);border-color:rgba(240,184,74,.35)}
+tr.hr th[scope=row],table.grid thead th.hc{color:var(--amber)}
+.av{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;margin:0 8px 0 -6px;font-size:11px;font-weight:700;color:#10131a;background:hsl(var(--h) 65% 68%)}
+.timer{margin-left:auto;margin-right:8px;font:600 14px ui-monospace,Menlo,Consolas,monospace;color:var(--mute)}
+.pbar{height:4px;border-radius:9px;background:var(--card2);overflow:hidden;margin:2px 0 8px}
+.pbar i{display:block;height:100%;background:var(--amber);transition:width .3s}
+#toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:var(--card2);border:1px solid var(--amber);color:var(--ink);padding:10px 18px;border-radius:999px;opacity:0;pointer-events:none;transition:.25s;z-index:60}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+.conf{position:fixed;top:-12px;width:9px;height:14px;border-radius:2px;z-index:50;pointer-events:none;animation:fall 2s ease-in forwards}
+@keyframes fall{to{transform:translate(var(--dx),105vh) rotate(720deg);opacity:.8}}
+.reveal .stars{animation:pop .6s .2s both}
+@keyframes pop{50%{transform:scale(1.25)}}
+@media(max-width:560px){.brand p{display:none}.bar{width:56px}}
+
+/* ===== v3: layout novo ===== */
+.wrap{max-width:1120px}
+header.top{margin:-4px -12px 16px}
+.total{gap:8px}
+.pill{display:inline-flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px 13px;font-size:13px;color:var(--mute)}
+.pill b{color:var(--amber);font-size:17px}
+.ico{display:inline-flex}.ico svg{width:1.15em;height:1.15em;display:block}
+.ico.line svg{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.btn .ico{margin-right:6px}.btn.refresh .ico{margin-right:0}
+.btn:disabled{opacity:.55;cursor:wait}
+.levels{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:16px}
+@media(max-width:760px){.levels{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.lvl{display:grid;gap:2px;text-align:left;background:var(--card);border:1px solid var(--line);color:var(--ink);border-radius:12px;padding:11px 14px;cursor:pointer;font:inherit;transition:border-color .2s,background .2s}
+.lvl:hover{border-color:var(--mute)}
+.lvl.on{border-color:var(--amber);background:linear-gradient(180deg,rgba(240,184,74,.12),var(--card));box-shadow:0 0 0 1px var(--amber) inset}
+.lvl-name{font:700 17px/1.2 Georgia,serif}
+.lvl-meta,.lvl-prog{color:var(--mute);font-size:12px}
+.dots{display:flex;gap:4px;margin:4px 0 2px}
+.dots i{width:18px;height:5px;border-radius:3px;background:var(--line)}
+.dots i.on{background:var(--amber)}
+.casehead .case-tools{gap:10px 14px}
+.casenav{display:flex;align-items:center;gap:8px}
+.casenav .kicker{margin:0}
+.casetools-r{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.iconbtn{width:34px;height:34px;border-radius:10px;border:1px solid var(--line);background:var(--card2);color:var(--ink);cursor:pointer;display:grid;place-items:center}
+.iconbtn:hover:not(:disabled){border-color:var(--amber);color:var(--amber)}
+.iconbtn:disabled{opacity:.35;cursor:default}
+.code{font:600 13px ui-monospace,Menlo,Consolas,monospace;color:var(--amber);background:var(--card2);border:1px dashed var(--line);border-radius:8px;padding:4px 10px;cursor:pointer}
+.code.static{cursor:default;color:var(--mute)}
+.timer{display:inline-flex;align-items:center;gap:6px;margin:0;font:600 14px ui-monospace,Menlo,Consolas,monospace;color:var(--mute)}
+.refresh.spin .ico{animation:spin .6s cubic-bezier(.45,0,.2,1)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.intro{margin:6px 0 10px}
+details.codebox{margin-top:6px}
+details.codebox summary{cursor:pointer;color:var(--mute);font-size:13px}
+.codeform{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.codein{background:var(--card2);border:1px solid var(--line);border-radius:8px;color:var(--ink);font:inherit;padding:6px 10px;width:150px;text-transform:uppercase}
+.codemsg{color:var(--red);min-height:1.2em;margin:4px 0 0}
+.board{display:grid;gap:0 20px;grid-template-columns:minmax(0,1fr)}
+.col-l,.col-r{display:contents}
+.cast-card{order:1}.clues-card{order:2}.work-card{order:3}.fichas-card{order:4}.accuse{order:5}.hint-card{order:6}
+@media(min-width:980px){
+  .board{grid-template-columns:minmax(0,5fr) minmax(0,6fr);align-items:start}
+  .col-l,.col-r{display:flex;flex-direction:column;min-width:0}
+  .cast-card,.clues-card,.work-card,.fichas-card,.accuse,.hint-card{order:0}
+}
+.chips.w li b{color:var(--rose,#e58f86)}.chips.r li b{color:var(--blue,#7fb2e5)}
+.tk-s{font-weight:700;color:#fff}.tk-w{color:#e58f86;font-weight:600}.tk-r{color:#7fb2e5;font-weight:600}
+.num{font:600 .95em ui-monospace,Menlo,Consolas,monospace;color:var(--amber)}
+.clue.done .num,.clue.done .tk-s,.clue.done .tk-w,.clue.done .tk-r{color:inherit}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.wtabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin:-4px 0 12px}
+.wtab{background:none;border:0;border-bottom:2px solid transparent;color:var(--mute);padding:8px 14px;font:inherit;font-weight:600;cursor:pointer}
+.wtab[aria-selected=true]{color:var(--amber);border-bottom-color:var(--amber)}
+.toolbar .btn{display:inline-flex;align-items:center}
+textarea.nt{width:100%;min-height:260px;resize:vertical;background:var(--card2);border:1px solid var(--line);border-radius:10px;color:var(--ink);font:15px/1.6 ui-monospace,Menlo,Consolas,monospace;padding:12px;margin:8px 0}
+.qrow{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:4px 0}
+.qlab{font-size:12px;color:var(--mute);text-transform:uppercase;letter-spacing:.08em;min-width:74px}
+.qchip{background:var(--card2);border:1px solid var(--line);color:var(--ink);border-radius:999px;padding:2px 11px;font:inherit;font-size:13px;cursor:pointer}
+.qchip:hover{border-color:var(--amber)}
+.qchip.w{border-left:3px solid #e58f86}.qchip.r{border-left:3px solid #7fb2e5}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin-top:8px}
+.ficha{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.fname{font-weight:700;margin-bottom:6px;display:flex;align-items:center}
+.frow{display:flex;justify-content:space-between;gap:8px;font-size:13px;padding:2px 0}
+.fk{color:var(--mute)}
+.fv{text-align:right}.fv.w{color:#e58f86;font-weight:600}.fv.r{color:#7fb2e5;font-weight:600}.fv.none{color:var(--mute)}
+.fv em{display:block;font-size:11px;color:var(--mute);font-style:normal}
+.ans-group{margin-bottom:12px}
+.ans-opts{display:flex;flex-wrap:wrap;gap:6px}
+.opt{background:var(--card2);border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:6px 12px;font:inherit;font-size:14px;cursor:pointer;transition:border-color .15s,background .15s}
+.opt b{margin-left:8px;padding-left:8px;border-left:1px solid var(--line);color:var(--amber);font-family:ui-monospace,Menlo,Consolas,monospace}
+.opt:hover{border-color:var(--mute)}
+.opt.on{background:rgba(240,184,74,.16);border-color:var(--amber);box-shadow:0 0 0 1px var(--amber) inset}
+.pbar{margin:4px 0 6px}
+/* ===== v4 ===== */
+.pill .ico{color:var(--amber)}
+.modes{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:14px}
+.mode{display:flex;align-items:center;justify-content:center;gap:8px;background:var(--card);border:1px solid var(--line);color:var(--mute);border-radius:12px;padding:10px 8px;font:inherit;font-weight:600;cursor:pointer;transition:border-color .2s,color .2s,background .2s}
+.mode:hover{color:var(--ink);border-color:var(--mute)}
+.mode.on{color:var(--amber);border-color:var(--amber);background:linear-gradient(180deg,rgba(240,184,74,.12),var(--card))}
+@media(max-width:620px){.modes{grid-template-columns:repeat(2,minmax(0,1fr))}.mode{font-size:14px}}
+.cardhead{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px}.cardhead h3{margin:0}
+.switch{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--mute);cursor:pointer;user-select:none}
+.switch input{position:absolute;opacity:0;width:1px;height:1px}
+.switch .knob{width:34px;height:20px;border-radius:999px;background:var(--card2);border:1px solid var(--line);position:relative;transition:.2s}
+.switch .knob::after{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:var(--mute);transition:.2s}
+.switch input:checked+.knob{background:rgba(240,184,74,.25);border-color:var(--amber)}
+.switch input:checked+.knob::after{left:16px;background:var(--amber)}
+.switch input:focus-visible+.knob{outline:2px solid var(--amber);outline-offset:2px}
+code.fx{display:block;margin-top:5px;font:13px/1.45 ui-monospace,Menlo,Consolas,monospace;color:#c9b6ff;background:rgba(140,110,255,.08);border-radius:6px;padding:3px 8px;white-space:normal;word-break:break-word}
+code.fx.block{margin:0 0 10px}
+.clue.done code.fx{color:inherit}
+.legend{font:12px/1.5 ui-monospace,Menlo,Consolas,monospace;color:var(--mute);background:var(--card2);border-radius:8px;padding:6px 10px;margin:0 0 10px}
+.pic{display:inline-block;flex:none;width:44px;height:44px;border-radius:10px;overflow:hidden;box-shadow:0 1px 0 rgba(255,255,255,.06) inset}
+.pic svg{display:block;width:100%;height:100%}
+.pic.sm{width:28px;height:28px;border-radius:7px;margin-right:8px}
+.pic.xs{width:22px;height:22px;border-radius:6px;margin:-2px 8px -2px -4px;vertical-align:middle}
+.pic.lg{width:84px;height:84px;border-radius:16px}
+.people{list-style:none;margin:0;padding:0;display:grid;gap:8px;grid-template-columns:repeat(auto-fill,minmax(210px,1fr))}
+.people li{display:flex;gap:10px;align-items:center;background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:7px 10px}
+.people b{display:block;font-size:15px}.bio{display:block;font-size:12px;color:var(--mute);line-height:1.35}
+.stmt-card .rule{margin:0 0 10px;font-size:14px}
+.stmts{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.stmts li{display:flex;gap:10px;align-items:flex-start;background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:9px 10px}
+.sbody{flex:1;min-width:0}.sbody b{display:block;font-size:14px}
+.sbody q{display:block;font-style:italic;margin-top:2px}
+.tv{flex:none;font:600 12px/1 system-ui,sans-serif;border-radius:999px;padding:6px 10px;border:1px solid var(--line);background:transparent;color:var(--mute);cursor:pointer;min-width:70px}
+.tv.t1{color:#0d2418;background:var(--green);border-color:var(--green)}
+.tv.t2{color:#fff;background:var(--red);border-color:var(--red)}
+.hint .tier{display:inline-block;font:600 11px system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);margin-right:8px}
+.boardwrap{overflow-x:auto;border-radius:12px;margin-top:6px}
+svg.cork{display:block;width:100%;min-width:480px;height:auto;border-radius:12px;background:radial-gradient(circle at 20% 30%,#b08a5a 0 1px,transparent 2px) 0 0/9px 9px,radial-gradient(circle at 70% 60%,#8a6538 0 1px,transparent 2px) 0 0/13px 13px,linear-gradient(135deg,#a07a4c,#8c6638);box-shadow:inset 0 0 0 10px #4a3220,inset 0 0 40px rgba(0,0,0,.45)}
+svg.cork .bi{cursor:pointer}
+svg.cork text{font-family:system-ui,sans-serif}
+.qchip.l{font-family:ui-monospace,Menlo,Consolas,monospace;border-left:3px solid #c9b6ff}
+.rhead{display:flex;gap:16px;align-items:center;margin-bottom:6px}.rhead h3{margin:2px 0 4px}.rhead p{margin:0}
+.liarline{border-left:3px solid var(--red);padding:4px 10px;background:rgba(226,100,93,.08);border-radius:6px}
+.fragline,.epilogue{border-left:3px solid var(--amber);padding:6px 12px;background:rgba(240,184,74,.08);border-radius:6px}
+.camp-intro h2{margin-bottom:8px}
+.chapters{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;margin-bottom:16px}
+.chap{display:grid;gap:3px;text-align:left;background:var(--card);border:1px solid var(--line);color:var(--ink);border-radius:14px;padding:12px 14px;font:inherit;cursor:pointer;position:relative;transition:transform .15s,border-color .2s}
+.chap:hover:not(:disabled){transform:translateY(-2px);border-color:var(--amber)}
+.chap.locked{opacity:.5;cursor:not-allowed}
+.chap.done{border-color:rgba(92,192,142,.6);background:linear-gradient(180deg,rgba(92,192,142,.09),var(--card))}
+.chap.final{grid-column:1/-1;background:linear-gradient(120deg,rgba(240,184,74,.14),var(--card) 60%);border-color:rgba(240,184,74,.5)}
+.chn{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute)}
+.chsym{font:700 26px/1.2 ui-monospace,Menlo,Consolas,monospace;color:#c9b6ff}
+.chname{font:700 17px/1.2 Georgia,serif}
+.chtitle{font-size:13px;color:var(--mute)}
+.chst{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--mute);margin-top:4px}
+.chst .st{color:var(--amber);letter-spacing:2px}
+.frag{font:600 12px ui-monospace,Menlo,Consolas,monospace;color:var(--amber);border:1px dashed var(--amber);border-radius:6px;padding:1px 6px}
+.frags{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 10px}
+.fragc{width:40px;height:52px;display:grid;place-items:center;border-radius:8px;border:1px dashed var(--line);font:700 22px ui-monospace,Menlo,Consolas,monospace;color:var(--mute);background:var(--card2)}
+.fragc.on{border-style:solid;border-color:var(--amber);color:var(--amber);background:rgba(240,184,74,.1)}
+details.lesson summary{display:flex;align-items:center;gap:14px;cursor:pointer;list-style:none}
+details.lesson summary::-webkit-details-marker{display:none}
+details.lesson summary small{display:block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute)}
+details.lesson summary>span:last-child{font:700 20px/1.25 Georgia,serif}
+.lesson .sym{min-width:58px;height:58px;padding:0 8px;display:grid;place-items:center;border-radius:14px;background:rgba(140,110,255,.12);color:#c9b6ff;font:700 22px ui-monospace,Menlo,Consolas,monospace}
+.lesson>p{margin:12px 0}
+table.tt{border-collapse:collapse;margin:6px 0 12px;font:14px ui-monospace,Menlo,Consolas,monospace}
+table.tt th,table.tt td{border:1px solid var(--line);padding:5px 12px;text-align:center}
+table.tt th{color:#c9b6ff;font-weight:600}
+table.tt td.v{color:var(--green)}table.tt td.f{color:var(--red)}
+table.tt td.out{font-weight:700;background:rgba(255,255,255,.03)}
+.example{border:1px dashed rgba(140,110,255,.45);border-radius:10px;padding:10px 12px;background:rgba(140,110,255,.05)}
+.example .tag{display:block;color:#c9b6ff;font-size:12px;letter-spacing:.12em;text-transform:uppercase}
+.example p{margin:4px 0 0}
+.qlist{padding-left:18px}.qlist li{margin:4px 0}.qlist code{color:#c9b6ff}
+.achs{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;margin-top:12px}
+.ach{display:flex;gap:12px;align-items:center;background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:10px 12px;opacity:.55}
+.ach.on{opacity:1;border-color:rgba(240,184,74,.55)}
+.ach b{display:block}.ach .small{display:block}
+.when{display:block;font-size:11px;color:var(--amber);margin-top:2px}
+.medal{flex:none;width:48px;height:48px;border-radius:50%;display:grid;place-items:center;font:700 15px ui-monospace,Menlo,Consolas,monospace;color:var(--mute);border:2px dashed var(--line)}
+.ach.on .medal{color:#1a1405;background:radial-gradient(circle at 35% 30%,#ffe6a6,#f0b84a 60%,#b8862a);border:2px solid #ffe6a6}
+.statl{margin:0;padding-left:18px}.statl li{margin:4px 0}.statl b{color:var(--amber)}
+footer .install{margin-left:8px}
+.dossier .codein{width:170px;letter-spacing:.2em}
+.stmt-card{order:2}.clues-card{order:3}.work-card{order:4}.fichas-card{order:5}.accuse{order:6}.hint-card{order:7}
+@media(min-width:980px){.stmt-card{order:0}}
+@media(max-width:560px){.stmts li{flex-wrap:wrap}.sbody{flex:1 1 calc(100% - 60px)}.stmts .tv{margin-left:54px}}
+.chsym,.lesson .sym,table.tt th,code.fx,.legend{font-family:"Cambria Math","STIX Two Math","DejaVu Sans Mono","Segoe UI Symbol",ui-monospace,Menlo,Consolas,monospace}
+.chsym{font-size:24px}
 </style>
 </head>
 <body>
@@ -105,7 +297,7 @@ footer button{background:none;border:0;color:var(--mute);text-decoration:underli
     <div class="total" id="total"></div>
   </header>
   <main id="app"></main>
-  <footer>Dedutivo · puzzles de dedução em grade · <button id="wipe" type="button">apagar progresso</button></footer>
+  <footer>Dedutivo · lógica matemática aplicada · <button id="wipe" type="button">apagar progresso</button><button id="install" class="install" type="button" hidden>instalar como app</button></footer>
 </div>
 
 <script>
@@ -237,34 +429,389 @@ function permutations(n){
   })(0);
   return res;
 }
-function solve(c){
-  const n=c.suspects.length, P=permutations(n), out=[];
-  for(const pw of P) for(const pr of P){
-    const S=pw.map((w,i)=>({w:c.weapons[w].v, r:c.rooms[pr[i]].v}));
-    if(c.clues.every(cl=>cl.f(S))) out.push({pw,pr,S});
-  }
+// ===== GERADOR DE CASOS v4 (vai dentro do bloco DATA do HTML) =====
+const art=it=>(it.g==="f"?"a ":"o ")+it.n;
+const prep=it=>(it.g==="f"?"na ":"no ")+it.n;
+const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+const parW=v=>v%2===0?"par":"ímpar";
+const isPrime=v=>{if(v<2)return false;for(let d=2;d*d<=v;d++)if(v%d===0)return false;return true;};
+function rng(seed){let a=seed>>>0;return()=>{a=(a+0x6D2B79F5)>>>0;let t=a;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return((t^(t>>>14))>>>0)/4294967296;};}
+const ri=(R,a,b)=>a+Math.floor(R()*(b-a+1));
+const pickOf=(R,a)=>a[Math.floor(R()*a.length)];
+function shuffled(R,a){const b=a.slice();for(let i=b.length-1;i>0;i--){const j=Math.floor(R()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+const sampleOf=(R,a,k)=>shuffled(R,a).slice(0,k);
+const sortedSample=(R,lo,hi,k)=>sampleOf(R,Array.from({length:hi-lo+1},(_,i)=>lo+i),k).sort((a,b)=>a-b);
+
+const _pc={};
+function perms(n){return _pc[n]||(_pc[n]=permutations(n));}
+function buildStates(c){
+  const n=c.suspects.length,P=perms(n),out=[];
+  for(const pw of P)for(const pr of P)out.push({pw,pr,S:pw.map((w,i)=>({w:c.weapons[w].v,r:c.rooms[pr[i]].v}))});
   return out;
 }
+function solve(c){const out=[];for(const s of buildStates(c))if((!c.base||c.base(s.S))&&c.clues.every(cl=>cl.f(s.S)))out.push(s);return out;}
+
+// ---------- elenco fixo (personagens recorrentes) ----------
+const NAMES=["Ana","Bruno","Carla","Diego","Elisa","Fábio","Gabi","Hugo","Iara","Jonas","Lia","Marta","Nilo","Otávio","Paula","Rui","Sara","Tiago","Vera","Zeca","Caio","Íris","Davi","Nara"];
+const CAST={
+ "Ana":["f","Bibliotecária que cataloga tudo em ordem alfabética, até os próprios álibis."],
+ "Bruno":["m","Cozinheiro de mão pesada e paciência curta."],
+ "Carla":["f","Contadora que nunca arredonda nada."],
+ "Diego":["m","Mágico amador, especialista em sumir na hora errada."],
+ "Elisa":["f","Engenheira que desconfia de qualquer número redondo."],
+ "Fábio":["m","Colecionador de relógios que vive atrasado."],
+ "Gabi":["f","Jornalista curiosa demais para o próprio bem."],
+ "Hugo":["m","Professor de geometria com um compasso no bolso."],
+ "Iara":["f","Bióloga marinha que conversa mais com peixes do que com gente."],
+ "Jonas":["m","Matemático aposentado que conta os degraus de toda escada."],
+ "Lia":["f","Estudante de física que mede tudo duas vezes."],
+ "Marta":["f","Herdeira com mais segredos do que joias."],
+ "Nilo":["m","Jardineiro calado que sabe onde cada coisa foi enterrada."],
+ "Otávio":["m","Advogado que responde perguntas com outras perguntas."],
+ "Paula":["f","Pianista que conta compassos até dormindo."],
+ "Rui":["m","Motorista que conhece todos os atalhos da cidade."],
+ "Sara":["f","Química meticulosa que nunca esquece um rótulo."],
+ "Tiago":["m","Fotógrafo que sempre estava no ângulo certo."],
+ "Vera":["f","Detetive particular aposentada. Ou quase."],
+ "Zeca":["m","Mordomo que ouve tudo e não comenta nada."],
+ "Caio":["m","Atleta que transforma qualquer coisa em competição."],
+ "Íris":["f","Astrônoma que só aparece depois do pôr do sol."],
+ "Davi":["m","Programador que confia mais em registros do que em pessoas."],
+ "Nara":["f","Cartógrafa que nunca se perde, nem quando quer."],
+ "Diana":["f","Arqueóloga com mania de escavar o passado alheio."],
+ "Érico":["m","Poeta que rima até nos depoimentos."]
+};
+const gOf=n=>(CAST[n]||["m"])[0];
+const bioOf=n=>(CAST[n]||["",""])[1];
+
+const SURN=["Algarismo","Quociente","Fração","Logaritmo","Equação","Raiz","Vetor","Parábola","Primo","Teorema"];
+const IT=s=>s.split("|").map(x=>{const[n,g]=x.split(":");return{n,g};});
+const THEMES=[
+ {where:"na sala de controle da Estação Meridian",roles:[["o relojoeiro-chefe","m"],["a engenheira-chefe","f"]],titles:["O Relógio da Estação","Sabotagem na Meridian"],W:IT("Chave inglesa:f|Estilete:m|Peso de relógio:m|Corrente:f|Marreta:f|Alavanca:f"),R:IT("Bilheteria:f|Oficina:f|Plataforma:f|Sala de controle:f|Cantina:f|Depósito:m")},
+ {where:"durante a visita exclusiva ao Aquário Azul",roles:[["o curador","m"],["a bióloga-chefe","f"]],titles:["O Incidente no Aquário","Maré Vermelha"],W:IT("Gancho:m|Bisturi:m|Frasco tóxico:m|Arpão:m|Rede:f|Tridente:m"),R:IT("Coralário:m|Laboratório:m|Sala das bombas:f|Túnel:m|Berçário:m|Cozinha:f")},
+ {where:"no Observatório, em plena sessão astronômica",roles:[["o diretor","m"],["a astrônoma-chefe","f"]],titles:["O Enigma do Observatório","Eclipse Fatal"],W:IT("Cabo:m|Lâmina:f|Contrapeso:m|Tripé:m|Lente pesada:f|Chave de fenda:f"),R:IT("Cúpula:f|Arquivo:m|Terraço:m|Sala de controle:f|Oficina:f|Planetário:m")},
+ {where:"na recepção do Museu das Antiguidades",roles:[["o segurança","m"],["a restauradora","f"]],titles:["O Roubo no Museu","A Peça Desaparecida"],W:IT("Lanterna pesada:f|Punhal:m|Sedativo:m|Candelabro:m|Espada:f|Estatueta:f"),R:IT("Galeria:f|Reserva:f|Restauro:m|Pátio:m|Cofre:m|Cripta:f")},
+ {where:"na madrugada de um congresso no Hotel Neblina",roles:[["o gerente","m"],["a recepcionista","f"]],titles:["Mistério no Hotel Neblina","Hóspede Oculto"],W:IT("Corda:f|Faca de mesa:f|Ampola:f|Abajur:m|Extintor:m|Tesoura:f"),R:IT("Recepção:f|Suíte:f|Lavanderia:f|Cozinha:f|Garagem:f|Cobertura:f")},
+ {where:"nos bastidores do Teatro Íris, após o último ato",roles:[["o diretor","m"],["a atriz principal","f"]],titles:["A Noite do Teatro","Cortina Final"],W:IT("Cabo de cena:m|Adaga cenográfica:f|Pó químico:m|Castiçal:m|Holofote:m|Sino:m"),R:IT("Coxia:f|Camarim:m|Oficina:f|Palco:m|Plateia:f|Bilheteria:f")},
+ {where:"no Farol de Santa Bruma, isolado pela tempestade",roles:[["o engenheiro responsável","m"],["a faroleira","f"]],titles:["O Segredo do Farol","Tempestade em Santa Bruma"],W:IT("Bússola:f|Alicate:m|Sinalizador:m|Chave:f|Âncora:f|Lampião:m"),R:IT("Lanterna:f|Depósito:m|Sala de mapas:f|Dormitório:m|Cais:m|Escada:f")},
+ {where:"na véspera do leilão da Casa Albatroz",roles:[["o avaliador","m"],["a leiloeira","f"]],titles:["O Cofre da Casa de Leilões","Lance Final"],W:IT("Régua de metal:f|Compasso:m|Lupa pesada:f|Calculadora:f|Martelo de leilão:m|Pesa-papéis:m"),R:IT("Salão:m|Escritório:m|Arquivo:m|Adega:f|Cofre:m|Galeria:f")},
+ {where:"numa mina desativada",roles:[["o geólogo","m"],["a engenheira de minas","f"]],titles:["O Código da Mina","Galeria Sem Saída"],W:IT("Picareta:f|Lanterna:f|Cabo:m|Medidor:m|Pá:f|Britadeira:f"),R:IT("Galeria Norte:f|Poço:m|Câmara:f|Trilho:m|Túnel:m|Depósito:m")},
+ {where:"durante o baile de inverno numa mansão isolada",roles:[["a anfitriã","f"],["o mordomo","m"]],titles:["O Último Baile de Inverno","Valsa Fatal"],W:IT("Leque metálico:m|Punhal:m|Frasco:m|Castiçal:m|Bastão:m|Taça quebrada:f"),R:IT("Salão:m|Sótão:m|Biblioteca:f|Jardim:m|Adega:f|Varanda:f")},
+ {where:"no acampamento da expedição",roles:[["o líder","m"],["a cartógrafa","f"]],titles:["A Expedição Perdida","Acampamento Silencioso"],W:IT("Corda:f|Machadinha:f|Soro:m|Marreta:f|Bússola:f|Estaca:f"),R:IT("Barraca:f|Ravina:f|Caverna:f|Ponte:f|Mirante:m|Trilha:f")},
+ {where:"no arquivo histórico da cidade",roles:[["o guardião do manuscrito","m"],["a arquivista","f"]],titles:["O Manuscrito de Cinzas","Tinta Fresca"],W:IT("Estilete:m|Peso de papel:m|Frasco:m|Castiçal:m|Martelo:m|Tinteiro:m"),R:IT("Arquivo:m|Laboratório:m|Galeria:f|Depósito:m|Gabinete:m|Biblioteca:f")}
+];
+
+const LEVELS=[
+ {key:"A",name:"Aprendiz",n:3,w:[1,6],r:null,min:3,max:5,gentle:.8,kt:1,
+  tip:"Para começar, use cada pista para riscar opções no caderno e cruze os três quadros.",
+  mix:{sum1:3,prod1:3,parR:2,parW:2,notW:3,notR:3,cmpW:2,cmpR:2,sumW2:1,sumR2:1,eqk:1}},
+ {key:"I",name:"Investigador",n:4,w:[1,9],r:[1,6],min:4,max:7,gentle:.65,kt:2,
+  tip:"As pistas já misturam soma, produto, paridade e comparações. Anote o que cada pista descarta.",
+  mix:{sum1:2,prod1:2,parR:1,parW:1,notW:2,notR:2,cmpW:2,cmpR:2,sumW2:2,sumR2:2,diffW2:2,diffR2:2,consR:2,mult:2,eqk:2,extW:2,extR:2,samePar:1,sumGt:1}},
+ {key:"P",name:"Perito",n:4,w:[2,12],r:[2,9],min:5,max:9,gentle:.5,kt:3,
+  tip:"As pistas pedem contas com duas pessoas ao mesmo tempo. Procure a combinação que só uma delas permite.",
+  mix:{sum1:2,prod1:2,notW:1,notR:1,cmpW:2,cmpR:2,sumW2:3,sumR2:3,prodR2:2,diffW2:3,diffR2:3,consR:3,mult:3,eqk:3,extW:2,extR:2,samePar:2,sumGt:2}},
+ {key:"M",name:"Mestre",n:5,w:[1,12],r:[1,8],min:6,max:11,gentle:.4,kt:3,
+  tip:"Agora há pistas condicionais (\"se… então…\") e \"ou… ou…\". Às vezes o mais útil é descobrir o que não pode ser verdade.",
+  mix:{sum1:2,prod1:2,notW:1,notR:1,cmpW:2,cmpR:2,sumW2:3,sumR2:3,prodR2:2,diffW2:3,diffR2:3,consR:3,mult:3,eqk:3,extW:2,extR:2,samePar:2,sumGt:2,sum3W:2,cond:4,xor:3,ifPar:3}}
+];
+// pistas com conectivos lógicos (campanha e caso do dia)
+const SPICE=[
+ {conj:2,disj:2,nand:1,nor:1},
+ {conj:1,disj:2,condL:2,condc:1,iff:2,xorL:1,nand:1,nor:1,all:1,count:1},
+ {disj:2,condL:2,condc:1,iff:2,xorL:2,nand:2,nor:1,all:2,count:2},
+ {disj:2,condL:2,condc:2,iff:2,xorL:2,nand:2,nor:1,all:2,count:2}
+];
+
+// ---------- átomos e literais (para pistas com conectivos) ----------
+const PN=b=>b?"par":"ímpar";
+function atom(R,x,i,want,onlyWR){
+  const N=x.N[i],T=x.T[i],k=onlyWR?ri(R,0,1):ri(R,0,3);
+  if(k===0){const w=want===true?x.W.find(o=>o.v===T.w):want===false?pickOf(R,x.W.filter(o=>o.v!==T.w)):pickOf(R,x.W);
+    return{t:`${N} usou ${art(w)}`,nt:`${N} não usou ${art(w)}`,fx:`Arma(${N}, ${w.n})`,nfx:`¬Arma(${N}, ${w.n})`,f:S=>S[i].w===w.v};}
+  if(k===1){const r=want===true?x.Rm.find(o=>o.v===T.r):want===false?pickOf(R,x.Rm.filter(o=>o.v!==T.r)):pickOf(R,x.Rm);
+    return{t:`${N} esteve ${prep(r)}`,nt:`${N} não esteve ${prep(r)}`,fx:`Local(${N}, ${r.n})`,nfx:`¬Local(${N}, ${r.n})`,f:S=>S[i].r===r.v};}
+  if(k===2){const ev=T.w%2===0,par=want===null?R()<.5:(want?ev:!ev);
+    return{t:`a arma de ${N} tem peso ${PN(par)}`,nt:`a arma de ${N} tem peso ${PN(!par)}`,fx:`${PN(par)}(p(${N}))`,nfx:`${PN(!par)}(p(${N}))`,f:S=>(S[i].w%2===0)===par};}
+  const ev=T.r%2===0,par=want===null?R()<.5:(want?ev:!ev);
+  return{t:`${N} esteve num cômodo de número ${PN(par)}`,nt:`${N} esteve num cômodo de número ${PN(!par)}`,fx:`${PN(par)}(n(${N}))`,nfx:`${PN(!par)}(n(${N}))`,f:S=>(S[i].r%2===0)===par};
+}
+function lit(R,x,i,want){
+  const neg=R()<.3,a=atom(R,x,i,want===null?null:(neg?!want:want));
+  const L=neg?{t:a.nt,nt:a.t,fx:a.nfx,nfx:a.fx,f:S=>!a.f(S)}:{t:a.t,nt:a.nt,fx:a.fx,nfx:a.nfx,f:a.f};
+  L.v=L.f(x.T);return L;
+}
+const NW=["nenhum","um","dois","três","quatro","cinco"];
+const QPROPS=[
+ {s:"usou uma arma de peso par",p:"usaram armas de peso par",fx:"par(p(x))",f:q=>q.w%2===0},
+ {s:"esteve num cômodo de número par",p:"estiveram em cômodos de número par",fx:"par(n(x))",f:q=>q.r%2===0},
+ {s:"usou uma arma de peso maior que o número do próprio cômodo",p:"usaram armas de peso maior que o número do próprio cômodo",fx:"p(x) > n(x)",f:q=>q.w>q.r},
+ {s:"tem peso da arma e número do cômodo com a mesma paridade",p:"têm peso da arma e número do cômodo com a mesma paridade",fx:"par(p(x) + n(x))",f:q=>(q.w+q.r)%2===0}
+];
+
+const TPL={
+ sum1(R,x,i){const V=x.T[i].w+x.T[i].r;return{t:`Para ${x.N[i]}, o peso da arma somado ao número do cômodo dá ${V}.`,fx:`p(${x.N[i]}) + n(${x.N[i]}) = ${V}`,f:S=>S[i].w+S[i].r===V,who:[i]};},
+ prod1(R,x,i){const V=x.T[i].w*x.T[i].r;return{t:`Para ${x.N[i]}, o peso da arma multiplicado pelo número do cômodo dá ${V}.`,fx:`p(${x.N[i]}) · n(${x.N[i]}) = ${V}`,f:S=>S[i].w*S[i].r===V,who:[i]};},
+ parR(R,x,i){const p=x.T[i].r%2;return{t:`${x.N[i]} esteve num cômodo de número ${parW(x.T[i].r)}.`,fx:`${parW(x.T[i].r)}(n(${x.N[i]}))`,f:S=>S[i].r%2===p,who:[i]};},
+ parW(R,x,i){const p=x.T[i].w%2;return{t:`A arma de ${x.N[i]} tem peso ${parW(x.T[i].w)}.`,fx:`${parW(x.T[i].w)}(p(${x.N[i]}))`,f:S=>S[i].w%2===p,who:[i]};},
+ notW(R,x,i){const w=pickOf(R,x.W.filter(w=>w.v!==x.T[i].w));return{t:`${x.N[i]} não usou ${art(w)}.`,fx:`¬Arma(${x.N[i]}, ${w.n})`,f:S=>S[i].w!==w.v,who:[i]};},
+ notR(R,x,i){const r=pickOf(R,x.Rm.filter(r=>r.v!==x.T[i].r));return{t:`${x.N[i]} não esteve ${prep(r)}.`,fx:`¬Local(${x.N[i]}, ${r.n})`,f:S=>S[i].r!==r.v,who:[i]};},
+ cmpW(R,x,i,j){return x.T[i].w>x.T[j].w?{t:`A arma de ${x.N[i]} é mais pesada que a de ${x.N[j]}.`,fx:`p(${x.N[i]}) > p(${x.N[j]})`,f:S=>S[i].w>S[j].w,who:[i,j]}:{t:`A arma de ${x.N[i]} é mais leve que a de ${x.N[j]}.`,fx:`p(${x.N[i]}) < p(${x.N[j]})`,f:S=>S[i].w<S[j].w,who:[i,j]};},
+ cmpR(R,x,i,j){return x.T[i].r>x.T[j].r?{t:`O cômodo de ${x.N[i]} tem número maior que o de ${x.N[j]}.`,fx:`n(${x.N[i]}) > n(${x.N[j]})`,f:S=>S[i].r>S[j].r,who:[i,j]}:{t:`O cômodo de ${x.N[i]} tem número menor que o de ${x.N[j]}.`,fx:`n(${x.N[i]}) < n(${x.N[j]})`,f:S=>S[i].r<S[j].r,who:[i,j]};},
+ sumW2(R,x,i,j){const V=x.T[i].w+x.T[j].w;return{t:`A soma dos pesos das armas de ${x.N[i]} e ${x.N[j]} é ${V}.`,fx:`p(${x.N[i]}) + p(${x.N[j]}) = ${V}`,f:S=>S[i].w+S[j].w===V,who:[i,j]};},
+ sumR2(R,x,i,j){const V=x.T[i].r+x.T[j].r;return{t:`A soma dos números dos cômodos de ${x.N[i]} e ${x.N[j]} é ${V}.`,fx:`n(${x.N[i]}) + n(${x.N[j]}) = ${V}`,f:S=>S[i].r+S[j].r===V,who:[i,j]};},
+ prodR2(R,x,i,j){const V=x.T[i].r*x.T[j].r;return{t:`O produto dos números dos cômodos de ${x.N[i]} e ${x.N[j]} é ${V}.`,fx:`n(${x.N[i]}) · n(${x.N[j]}) = ${V}`,f:S=>S[i].r*S[j].r===V,who:[i,j]};},
+ diffW2(R,x,i,j){const V=Math.abs(x.T[i].w-x.T[j].w);return{t:`A diferença entre os pesos das armas de ${x.N[i]} e ${x.N[j]} é ${V}.`,fx:`|p(${x.N[i]}) − p(${x.N[j]})| = ${V}`,f:S=>Math.abs(S[i].w-S[j].w)===V,who:[i,j]};},
+ diffR2(R,x,i,j){const V=Math.abs(x.T[i].r-x.T[j].r);return{t:`A diferença entre os números dos cômodos de ${x.N[i]} e ${x.N[j]} é ${V}.`,fx:`|n(${x.N[i]}) − n(${x.N[j]})| = ${V}`,f:S=>Math.abs(S[i].r-S[j].r)===V,who:[i,j]};},
+ consR(R,x,i,j){if(Math.abs(x.T[i].r-x.T[j].r)!==1)return null;return{t:`${x.N[i]} e ${x.N[j]} estiveram em cômodos de números consecutivos.`,fx:`|n(${x.N[i]}) − n(${x.N[j]})| = 1`,f:S=>Math.abs(S[i].r-S[j].r)===1,who:[i,j]};},
+ mult(R,x,i){const{w,r}=x.T[i];if(r===1)return null;return w%r===0?{t:`O peso da arma de ${x.N[i]} é múltiplo do número do cômodo de ${x.N[i]}.`,fx:`n(${x.N[i]}) | p(${x.N[i]})`,f:S=>S[i].w%S[i].r===0,who:[i]}:{t:`O peso da arma de ${x.N[i]} não é múltiplo do número do cômodo de ${x.N[i]}.`,fx:`¬(n(${x.N[i]}) | p(${x.N[i]}))`,f:S=>S[i].w%S[i].r!==0,who:[i]};},
+ eqk(R,x,i){const k=x.T[i].w-x.T[i].r,N=x.N[i];const t=k===0?`O peso da arma de ${N} é igual ao número do cômodo.`:k>0?`O peso da arma de ${N} é igual ao número do cômodo mais ${k}.`:`O peso da arma de ${N} é igual ao número do cômodo menos ${-k}.`;return{t,fx:k===0?`p(${N}) = n(${N})`:`p(${N}) = n(${N}) ${k>0?"+":"−"} ${Math.abs(k)}`,f:S=>S[i].w-S[i].r===k,who:[i]};},
+ extW(R,x,i){const a=x.T[i].w,N=x.N[i];if(x.T.every((q,m)=>m===i||a>q.w))return{t:`${N} usou a arma mais pesada de todas.`,fx:`∀y ≠ ${N}: p(${N}) > p(y)`,f:S=>S.every((q,m)=>m===i||S[i].w>q.w),who:[i]};if(x.T.every((q,m)=>m===i||a<q.w))return{t:`${N} usou a arma mais leve de todas.`,fx:`∀y ≠ ${N}: p(${N}) < p(y)`,f:S=>S.every((q,m)=>m===i||S[i].w<q.w),who:[i]};return null;},
+ extR(R,x,i){const a=x.T[i].r,N=x.N[i];if(x.T.every((q,m)=>m===i||a>q.r))return{t:`${N} esteve no cômodo de maior número.`,fx:`∀y ≠ ${N}: n(${N}) > n(y)`,f:S=>S.every((q,m)=>m===i||S[i].r>q.r),who:[i]};if(x.T.every((q,m)=>m===i||a<q.r))return{t:`${N} esteve no cômodo de menor número.`,fx:`∀y ≠ ${N}: n(${N}) < n(y)`,f:S=>S.every((q,m)=>m===i||S[i].r<q.r),who:[i]};return null;},
+ samePar(R,x,i){const s=x.T[i].w%2===x.T[i].r%2,N=x.N[i];return{t:`O peso da arma e o número do cômodo de ${N} têm ${s?"a mesma paridade":"paridades diferentes"}.`,fx:`par(p(${N})) ${s?"↔":"⊕"} par(n(${N}))`,f:S=>(S[i].w%2===S[i].r%2)===s,who:[i]};},
+ sumGt(R,x,i){const V=x.T[i].w+x.T[i].r-ri(R,1,3);if(V<2)return null;return{t:`Para ${x.N[i]}, a soma do peso da arma com o número do cômodo é maior que ${V}.`,fx:`p(${x.N[i]}) + n(${x.N[i]}) > ${V}`,f:S=>S[i].w+S[i].r>V,who:[i]};},
+ sum3W(R,x,i,j,k){if(k<0)return null;const V=x.T[i].w+x.T[j].w+x.T[k].w;return{t:`A soma dos pesos das armas de ${x.N[i]}, ${x.N[j]} e ${x.N[k]} é ${V}.`,fx:`p(${x.N[i]}) + p(${x.N[j]}) + p(${x.N[k]}) = ${V}`,f:S=>S[i].w+S[j].w+S[k].w===V,who:[i,j,k]};},
+ cond(R,x,i,j){let A,B;if(R()<.5){A=x.Rm.find(r=>r.v===x.T[i].r);B=x.W.find(w=>w.v===x.T[j].w);}else{A=pickOf(R,x.Rm.filter(r=>r.v!==x.T[i].r));B=pickOf(R,x.W);}return{t:`Se ${x.N[i]} esteve ${prep(A)}, então ${x.N[j]} usou ${art(B)}.`,fx:`Local(${x.N[i]}, ${A.n}) → Arma(${x.N[j]}, ${B.n})`,f:S=>S[i].r!==A.v||S[j].w===B.v,who:[i,j]};},
+ xor(R,x,i,j){let Wa,Rb;if(R()<.5){Wa=x.W.find(w=>w.v===x.T[i].w);Rb=pickOf(R,x.Rm.filter(r=>r.v!==x.T[j].r));}else{Wa=pickOf(R,x.W.filter(w=>w.v!==x.T[i].w));Rb=x.Rm.find(r=>r.v===x.T[j].r);}return{t:`Ou ${x.N[i]} usou ${art(Wa)}, ou ${x.N[j]} esteve ${prep(Rb)} — mas não as duas coisas.`,fx:`Arma(${x.N[i]}, ${Wa.n}) ⊕ Local(${x.N[j]}, ${Rb.n})`,f:S=>(S[i].w===Wa.v)!==(S[j].r===Rb.v),who:[i,j]};},
+ ifPar(R,x,i,j){const p=ri(R,0,1),q=ri(R,0,1);const txt=v=>v?"ímpar":"par";return{t:`Se o cômodo de ${x.N[i]} tem número ${txt(p)}, então a arma de ${x.N[j]} tem peso ${txt(q)}.`,fx:`${txt(p)}(n(${x.N[i]})) → ${txt(q)}(p(${x.N[j]}))`,f:S=>S[i].r%2!==p||S[j].w%2===q,who:[i,j]};},
+ // ---- conectivos (novos) ----
+ conj(R,x,i,j){const A=lit(R,x,i,true),B=lit(R,x,j,true);return{t:`${cap(A.t)} e ${B.t}.`,fx:`${A.fx} ∧ ${B.fx}`,f:S=>A.f(S)&&B.f(S),who:[i,j],op:"∧"};},
+ disj(R,x,i,j){let A=lit(R,x,i,true),B=lit(R,x,j,R()<.65?false:null);if(R()<.5)[A,B]=[B,A];return{t:`${cap(A.t)} ou ${B.t}.`,fx:`${A.fx} ∨ ${B.fx}`,f:S=>A.f(S)||B.f(S),who:[i,j],op:"∨"};},
+ condL(R,x,i,j){const P=lit(R,x,i,null),Q=lit(R,x,j,P.v?true:null);return{t:`Se ${P.t}, então ${Q.t}.`,fx:`${P.fx} → ${Q.fx}`,f:S=>!P.f(S)||Q.f(S),who:[i,j],op:"→"};},
+ condc(R,x,i,j){const P=lit(R,x,i,null),Q=lit(R,x,j,P.v?true:null);return{t:`Se ${Q.nt}, então ${P.nt}.`,fx:`${Q.nfx} → ${P.nfx}`,f:S=>!P.f(S)||Q.f(S),who:[i,j],op:"→"};},
+ iff(R,x,i,j){const P=lit(R,x,i,null),Q=lit(R,x,j,P.v);return{t:`${cap(P.t)} se, e somente se, ${Q.t}.`,fx:`${P.fx} ↔ ${Q.fx}`,f:S=>P.f(S)===Q.f(S),who:[i,j],op:"↔"};},
+ xorL(R,x,i,j){const P=lit(R,x,i,null),Q=lit(R,x,j,!P.v);return{t:`Ou ${P.t}, ou ${Q.t}, mas não as duas coisas.`,fx:`${P.fx} ⊕ ${Q.fx}`,f:S=>P.f(S)!==Q.f(S),who:[i,j],op:"⊕"};},
+ nand(R,x,i,j){const P=lit(R,x,i,null),Q=lit(R,x,j,P.v?false:null);return{t:`Não é verdade que ${P.t} e ${Q.t} ao mesmo tempo.`,fx:`¬(${P.fx} ∧ ${Q.fx})`,f:S=>!(P.f(S)&&Q.f(S)),who:[i,j],op:"¬∧"};},
+ nor(R,x,i,j){const P=atom(R,x,i,false,true),Q=atom(R,x,j,false,true);return{t:`Nem ${P.t}, nem ${Q.t}.`,fx:`¬(${P.fx} ∨ ${Q.fx})`,f:S=>!P.f(S)&&!Q.f(S),who:[i,j],op:"¬∨"};},
+ all(R,x){
+  const T=x.T,c=[];
+  for(const a of[0,1])for(const b of[0,1]){
+    if(T.some(q=>q.r%2===a)&&T.every(q=>q.r%2!==a||q.w%2===b))c.push({t:`Todo suspeito que esteve num cômodo de número ${PN(!a)} usou uma arma de peso ${PN(!b)}.`,fx:`∀x (${PN(!a)}(n(x)) → ${PN(!b)}(p(x)))`,f:S=>S.every(q=>q.r%2!==a||q.w%2===b)});
+    if(T.some(q=>q.w%2===a)&&T.every(q=>q.w%2!==a||q.r%2===b))c.push({t:`Todo suspeito que usou uma arma de peso ${PN(!a)} esteve num cômodo de número ${PN(!b)}.`,fx:`∀x (${PN(!a)}(p(x)) → ${PN(!b)}(n(x)))`,f:S=>S.every(q=>q.w%2!==a||q.r%2===b)});
+  }
+  if(T.every(q=>q.w!==q.r))c.push({t:"Ninguém usou uma arma de peso igual ao número do próprio cômodo.",fx:"∀x ¬(p(x) = n(x))",f:S=>S.every(q=>q.w!==q.r)});
+  if(T.every(q=>q.w>q.r))c.push({t:"Todos usaram armas de peso maior que o número do próprio cômodo.",fx:"∀x (p(x) > n(x))",f:S=>S.every(q=>q.w>q.r)});
+  if(T.every(q=>q.w<q.r))c.push({t:"Todos usaram armas de peso menor que o número do próprio cômodo.",fx:"∀x (p(x) < n(x))",f:S=>S.every(q=>q.w<q.r)});
+  if(!c.length)return null;const o=pickOf(R,c);o.who=[];o.op="∀";return o;
+ },
+ count(R,x){
+  const P=pickOf(R,QPROPS),k=x.T.filter(P.f).length,n=x.n;if(k===n)return null;
+  const t=k===0?`Nenhum suspeito ${P.s}.`:k===1?`Exatamente um suspeito ${P.s}.`:`Exatamente ${NW[k]} suspeitos ${P.p}.`;
+  const fx=k===0?`¬∃x ${P.fx}`:k===1?`∃!x ${P.fx}`:`|{x : ${P.fx}}| = ${k}`;
+  return{t,fx,f:S=>S.filter(P.f).length===k,who:[],op:"∃"};
+ }
+};
+
+const KILLERS=[
+ {tier:1,t:"O culpado é quem usou a arma mais pesada.",fx:"C(x) ↔ ∀y ≠ x: p(y) < p(x)",f:(p,S)=>S.every(q=>q===p||q.w<p.w)},
+ {tier:1,t:"O culpado é quem usou a arma mais leve.",fx:"C(x) ↔ ∀y ≠ x: p(y) > p(x)",f:(p,S)=>S.every(q=>q===p||q.w>p.w)},
+ {tier:1,t:"O culpado esteve no cômodo de maior número.",fx:"C(x) ↔ ∀y ≠ x: n(y) < n(x)",f:(p,S)=>S.every(q=>q===p||q.r<p.r)},
+ {tier:1,t:"O culpado esteve no cômodo de menor número.",fx:"C(x) ↔ ∀y ≠ x: n(y) > n(x)",f:(p,S)=>S.every(q=>q===p||q.r>p.r)},
+ {tier:1,t:"No caso do culpado, o peso da arma e o número do cômodo têm paridades diferentes.",fx:"C(x) ↔ ímpar(p(x) + n(x))",f:p=>(p.w+p.r)%2===1},
+ {tier:1,t:"O peso da arma do culpado é múltiplo do número do cômodo onde ele esteve.",fx:"C(x) ↔ n(x) | p(x)",f:p=>p.w%p.r===0},
+ {tier:2,t:"O culpado é quem tem a maior soma entre o peso da arma e o número do cômodo.",fx:"C(x) ↔ ∀y ≠ x: p(y) + n(y) < p(x) + n(x)",f:(p,S)=>S.every(q=>q===p||q.w+q.r<p.w+p.r)},
+ {tier:2,t:"O culpado é quem tem a menor soma entre o peso da arma e o número do cômodo.",fx:"C(x) ↔ ∀y ≠ x: p(y) + n(y) > p(x) + n(x)",f:(p,S)=>S.every(q=>q===p||q.w+q.r>p.w+p.r)},
+ {tier:2,t:"O peso da arma do culpado é exatamente o dobro do número do cômodo onde ele esteve.",fx:"C(x) ↔ p(x) = 2 · n(x)",f:p=>p.w===2*p.r},
+ {tier:2,t:"O culpado é quem tem a maior diferença entre o peso da arma e o número do cômodo.",fx:"C(x) ↔ ∀y ≠ x: |p(y) − n(y)| < |p(x) − n(x)|",f:(p,S)=>S.every(q=>q===p||Math.abs(q.w-q.r)<Math.abs(p.w-p.r))},
+ {tier:3,t:"O peso da arma do culpado dividido pelo número do cômodo dá um número inteiro e ímpar.",fx:"C(x) ↔ n(x) | p(x) ∧ ímpar(p(x) / n(x))",f:p=>p.w%p.r===0&&(p.w/p.r)%2===1},
+ {tier:3,t:"A soma do peso da arma com o número do cômodo do culpado é um número primo.",fx:"C(x) ↔ primo(p(x) + n(x))",f:p=>isPrime(p.w+p.r)},
+ {tier:3,t:"O produto do peso da arma pelo número do cômodo do culpado é um quadrado perfeito.",fx:"C(x) ↔ ∃k: p(x) · n(x) = k²",f:p=>{const v=p.w*p.r,s=Math.round(Math.sqrt(v));return s*s===v;}},
+ {tier:3,t:"O culpado é quem tem o maior produto entre o peso da arma e o número do cômodo.",fx:"C(x) ↔ ∀y ≠ x: p(y) · n(y) < p(x) · n(x)",f:(p,S)=>S.every(q=>q===p||q.w*q.r<p.w*p.r)}
+];
+
+function genClue(R,x,mix,kinds,tot){
+  let v=R()*tot,kind=kinds[0];
+  for(const k of kinds){v-=mix[k];if(v<0){kind=k;break;}}
+  const i=ri(R,0,x.n-1);let j=ri(R,0,x.n-2);if(j>=i)j++;
+  let k=-1;if(x.n>=3){const rest=[...Array(x.n).keys()].filter(m=>m!==i&&m!==j);k=pickOf(R,rest);}
+  const cl=TPL[kind](R,x,i,j,k);
+  return cl&&cl.f(x.T)?cl:null;
+}
+function culpritIn(kf,S){let k=-1;for(let i=0;i<S.length;i++)if(kf(S[i],S)){if(k>=0)return -1;k=i;}return k;}
+
+// opts (opcional): {mix, theme, focus:[tipos], need, liar, max}
+function tryGenerate(L,R,relaxed,opts){
+  const th=opts&&opts.theme!=null?THEMES[opts.theme]:pickOf(R,THEMES),n=L.n;
+  const sus=sampleOf(R,NAMES,n).sort((a,b)=>a.localeCompare(b,"pt"));
+  const wv=sortedSample(R,L.w[0],L.w[1],n),rv=L.r?sortedSample(R,L.r[0],L.r[1],n):[...Array(n).keys()].map(i=>i+1);
+  const W=sampleOf(R,th.W,n).map((it,i)=>({n:it.n,g:it.g,v:wv[i]}));
+  const Rm=sampleOf(R,th.R,n).map((it,i)=>({n:it.n,g:it.g,v:rv[i]}));
+  const pw=shuffled(R,[...Array(n).keys()]),pr=shuffled(R,[...Array(n).keys()]);
+  const T=pw.map((w,i)=>({w:W[w].v,r:Rm[pr[i]].v}));
+  const ks=KILLERS.filter(k=>k.tier<=L.kt).map(k=>({k,m:T.map((p,i)=>k.f(p,T)?i:-1).filter(i=>i>=0)})).filter(o=>o.m.length===1);
+  if(!ks.length)return null;
+  const ko=pickOf(R,ks);
+  let ST=buildStates({suspects:sus,weapons:W,rooms:Rm}).map(s=>s.S);
+  const mix=opts&&opts.mix?Object.assign({},L.mix,opts.mix):L.mix;
+  const x={n,N:sus,W,Rm,T},kinds=Object.keys(mix),tot=kinds.reduce((a,k)=>a+mix[k],0);
+  // ---- depoimentos: o culpado mente, os demais dizem a verdade ----
+  let base=null,stmts=null;
+  if(opts&&opts.liar){
+    const kc=ko.m[0];stmts=[];
+    for(let i=0;i<n;i++){
+      let st=null;
+      for(let t=0;t<120&&!st;t++){
+        if(i!==kc){const cl=genClue(R,x,mix,kinds,tot);if(cl&&cl.who.length&&!cl.who.includes(i))st=cl;}
+        else{const Tp=ST[Math.floor(R()*ST.length)];const cl=genClue(R,{n,N:sus,W,Rm,T:Tp},mix,kinds,tot);if(cl&&cl.who.length&&!cl.who.includes(i)&&!cl.f(T))st=cl;}
+      }
+      if(!st)return null;
+      stmts.push({by:i,t:st.t,fx:st.fx,f:st.f});
+    }
+    const kf=ko.k.f;
+    base=S=>{const k=culpritIn(kf,S);if(k<0)return false;for(let i=0;i<n;i++)if(stmts[i].f(S)===(i===k))return false;return true;};
+    ST=ST.filter(base);
+    if(ST.length<2)return null;
+  }
+  let alive=ST.map((_,i)=>i);const clues=[],used=new Set();
+  // ---- pistas obrigatórias do conceito (campanha) ----
+  if(opts&&opts.focus&&opts.need){
+    let need=opts.need;
+    for(let tries=0;need>0&&tries<300;tries++){
+      const kind=pickOf(R,opts.focus);const i=ri(R,0,n-1);let j=ri(R,0,n-2);if(j>=i)j++;
+      const cl=TPL[kind](R,x,i,j,-1);if(!cl||!cl.f(T)||used.has(cl.t))continue;
+      const after=alive.filter(q=>cl.f(ST[q]));if(after.length===alive.length||after.length<2)continue;
+      cl.focus=true;clues.push(cl);used.add(cl.t);alive=after;need--;
+    }
+    if(need>0)return null;
+  }
+  const MAX=opts&&opts.max||L.max;
+  while(alive.length>1&&clues.length<MAX+(opts?10:4)){
+    const cands=[],step=Math.max(1,Math.floor(alive.length/1500));
+    for(let tries=0;cands.length<30&&tries<120;tries++){
+      const cl=genClue(R,x,mix,kinds,tot);if(!cl||used.has(cl.t))continue;
+      let after=0,seen=0;for(let q=0;q<alive.length;q+=step){seen++;if(cl.f(ST[alive[q]]))after++;}
+      after=after*alive.length/seen;
+      if(after<alive.length&&!cands.some(o=>o.cl.t===cl.t))cands.push({cl,after});
+    }
+    if(!cands.length)return null;
+    cands.sort((a,b)=>b.after-a.after);
+    const pick=cands[Math.floor(R()*Math.max(1,Math.ceil(cands.length*L.gentle)))];
+    alive=alive.filter(i=>pick.cl.f(ST[i]));clues.push(pick.cl);used.add(pick.cl.t);
+  }
+  if(alive.length!==1)return null;
+  let keep=clues.slice();
+  for(const idx of shuffled(R,clues.map((_,i)=>i))){
+    if(clues[idx].focus)continue;
+    const without=keep.filter(c=>c!==clues[idx]);let cnt=0;
+    for(const s of ST){if(without.every(c=>c.f(s))){cnt++;if(cnt>1)break;}}
+    if(cnt===1)keep=without;
+  }
+  keep=shuffled(R,keep);
+  if(!relaxed&&(keep.length<L.min||keep.length>MAX))return null;
+  const role=pickOf(R,th.roles),victim=`${role[0]} ${pickOf(R,SURN)}`;
+  const c={level:L.name,lv:LEVELS.indexOf(L),title:pickOf(R,th.titles),
+    intro:`${cap(victim)} foi encontrad${role[1]==="f"?"a":"o"} sem vida ${th.where}. ${["","","","Três","Quatro","Cinco"][n]} pessoas estavam por perto, cada uma sozinha num cômodo, com uma arma à mão. ${L.tip}`,
+    suspects:sus,weapons:W,rooms:Rm,clues:keep,killer:{t:ko.k.t,fx:ko.k.fx,f:ko.k.f},hints:[],explain:[],ending:""};
+  if(base){c.base=base;c.stmts=stmts;c.liar=true;}
+  const sols=solve(c);if(sols.length!==1)return null;
+  const sol=sols[0],culprit=sol.S.findIndex(p=>c.killer.f(p,sol.S));
+  if(culprit<0)return null;
+  c.explain=explainCase(c,sol,culprit);c.ending=endingFor(R,c,sol,culprit);
+  return c;
+}
+
+function explainCase(c,sol,culprit){
+  const n=c.suspects.length;let alive=buildStates(c);const rem=c.clues.map((_,i)=>i),known=new Set(),out=[];
+  const facts=()=>{const f=[];for(let i=0;i<n;i++){
+      const ws=new Set(alive.map(s=>s.pw[i]));if(ws.size===1&&!known.has("w"+i)){known.add("w"+i);f.push(`${c.suspects[i]} usou ${art(c.weapons[[...ws][0]])}`);}
+      const rs=new Set(alive.map(s=>s.pr[i]));if(rs.size===1&&!known.has("r"+i)){known.add("r"+i);f.push(`${c.suspects[i]} esteve ${prep(c.rooms[[...rs][0]])}`);}
+    }return f;};
+  const tail=f=>alive.length===1?"só uma combinação sobra, e o quadro fecha por completo.":f.length?`agora é certo que ${f.join("; ")}.`:"nada é certo ainda, mas o cerco aperta.";
+  if(c.base){const before=alive.length;alive=alive.filter(s=>c.base(s.S));
+    out.push(`Depoimentos: o culpado apontado pela pista final mente, e todos os outros dizem a verdade. Testando cada suspeito como culpado e descartando as hipóteses contraditórias, as combinações caem de ${before} para ${alive.length}; ${tail(facts())}`);}
+  while(rem.length){
+    let best=-1,ba=null;
+    for(const i of rem){const a=alive.filter(s=>c.clues[i].f(s.S));if(ba===null||a.length<ba.length){best=i;ba=a;}}
+    rem.splice(rem.indexOf(best),1);const before=alive.length;alive=ba;
+    out.push(`Pista ${best+1} (“${c.clues[best].t}”): de ${before} para ${alive.length} combinações possíveis; ${tail(facts())}`);
+  }
+  out.push(`Pista final (“${c.killer.t}”): só ${c.suspects[culprit]} cumpre isso, com ${c.weapons[sol.pw[culprit]].n} (${c.weapons[sol.pw[culprit]].v}) ${prep(c.rooms[sol.pr[culprit]])} (${c.rooms[sol.pr[culprit]].v}).`);
+  if(c.stmts)out.push(`${c.suspects[culprit]} mentiu ao dizer “${c.stmts[culprit].t}”. Todos os outros depoimentos são verdadeiros.`);
+  return out;
+}
+function endingFor(R,c,sol,k){
+  const X=c.suspects[k],w=c.weapons[sol.pw[k]],r=c.rooms[sol.pr[k]];
+  return pickOf(R,[
+    `${X} achou que estar ${prep(r)} seria um álibi perfeito. Só não contava com um detetive que faz conta de cabeça.`,
+    `${X} tentou esconder tudo, mas ${w.n} (peso ${w.v}) e o cômodo ${r.v} entregaram a história inteira.`,
+    `Caso encerrado! ${X} vai ter muito tempo livre para revisar as contas.`,
+    `${X} apostou no silêncio, mas os números falaram mais alto.`
+  ]);
+}
+function generateCase(level,seed,opts){
+  const L=LEVELS[level];
+  for(let a=0;a<500;a++){
+    const c=tryGenerate(L,rng((seed+a*7919)>>>0),a>=250,opts);
+    if(c)return c;
+  }
+  throw new Error("falha ao gerar caso");
+}
+
+// ---------- campanha: A Sociedade do Axioma ----------
+const CHAPTERS=[
+ {key:"neg",name:"Negação",sym:"¬",lv:0,theme:4,focus:["notW","notR"],need:2,table:"neg",title:"O Primeiro Não",
+  story:"Um bilhete anônimo chega à sua mesa: \"Não confie em ninguém da Sociedade do Axioma\". Horas depois, o primeiro corpo aparece.",
+  lesson:"A negação inverte o valor de uma proposição: se P é verdadeira, ¬P é falsa, e vice-versa. \"Ana não usou a Faca\" é ¬Arma(Ana, Faca). No caderno, uma negação vira um ✗ direto."},
+ {key:"and",name:"Conjunção",sym:"∧",lv:0,theme:3,focus:["conj"],need:2,table:"and",title:"Duas Verdades",
+  story:"O culpado do primeiro caso guardava um cartão com um algarismo e o símbolo da Sociedade. Agora um segundo cartão aparece no Museu.",
+  lesson:"P ∧ Q só é verdadeira quando as duas partes são verdadeiras. Uma pista com \"e\" vale por duas: separe-a em dois fatos e marque os dois no caderno."},
+ {key:"or",name:"Disjunção",sym:"∨",lv:1,theme:1,focus:["disj"],need:2,table:"or",title:"Uma Coisa ou Outra",
+  story:"A Sociedade parece escolher lugares onde a água apaga rastros. O Aquário Azul é o próximo.",
+  lesson:"P ∨ Q é verdadeira quando pelo menos uma das partes é verdadeira (pode ser as duas). Se você descobrir que uma das partes é falsa, a outra tem de ser verdadeira: é o silogismo disjuntivo."},
+ {key:"imp",name:"Implicação",sym:"→",lv:1,theme:0,focus:["condL","condc"],need:2,table:"imp",title:"Se, Então",
+  story:"Um horário rabiscado num cartão leva você à Estação Meridian, minutos antes da inauguração.",
+  lesson:"P → Q só é falsa quando P é verdadeira e Q é falsa. Se P for falsa, a implicação vale de qualquer jeito. Ela equivale à contrapositiva ¬Q → ¬P, mas não à recíproca Q → P."},
+ {key:"iff",name:"Bicondicional",sym:"↔",lv:1,theme:5,focus:["iff"],need:2,table:"iff",title:"Se, e Somente Se",
+  story:"No Teatro Íris, a Sociedade deixou o quinto cartão preso na cortina, como quem assina a obra.",
+  lesson:"P ↔ Q é verdadeira quando P e Q têm o mesmo valor: as duas verdadeiras ou as duas falsas. Descobriu uma, descobriu a outra."},
+ {key:"xor",name:"Ou exclusivo",sym:"⊕",lv:2,theme:6,focus:["xorL"],need:2,table:"xor",title:"Um, Mas Não Ambos",
+  story:"Uma tempestade isola o Farol de Santa Bruma. Ninguém entra, ninguém sai, e alguém da Sociedade está lá dentro.",
+  lesson:"P ⊕ Q é verdadeira quando exatamente uma das partes é verdadeira. É a negação do bicondicional: P ⊕ Q ≡ ¬(P ↔ Q)."},
+ {key:"q",name:"Quantificadores",sym:"∀ ∃",lv:2,theme:8,focus:["all","count"],need:2,table:"q",title:"Para Todo Suspeito",
+  story:"Os cartões apontam para uma mina desativada. Lá embaixo, as regras valem para todos, ou para quase todos.",
+  lesson:"∀x P(x): todos cumprem P, e basta um contraexemplo para derrubar a afirmação. ∃x P(x): existe pelo menos um. ∃!x P(x): existe exatamente um. Negar troca o quantificador: ¬∀x P(x) ≡ ∃x ¬P(x)."},
+ {key:"dm",name:"Leis de De Morgan",sym:"¬(P ∧ Q)",lv:2,theme:7,focus:["nand","nor"],need:2,table:"dm",title:"A Lei de De Morgan",
+  story:"Na Casa Albatroz, o lote 8 do leilão é um caderno de De Morgan. Ele some, e o avaliador também.",
+  lesson:"¬(P ∧ Q) ≡ ¬P ∨ ¬Q e ¬(P ∨ Q) ≡ ¬P ∧ ¬Q. \"Nem A, nem B\" é uma conjunção de duas negações: dois ✗ no caderno."},
+ {key:"liar",name:"Verdade e mentira",sym:"V / F",lv:2,theme:2,liar:true,focus:["condL","iff"],need:1,table:"liar",title:"Quem Mente",
+  story:"No Observatório, cada suspeito dá um depoimento. Um integrante da Sociedade aprendeu a mentir com precisão matemática.",
+  lesson:"Cada suspeito faz uma afirmação. O culpado mente, os outros dizem a verdade. Suponha que alguém é o culpado e veja se tudo se encaixa: se surgir uma contradição, a hipótese é falsa. Isso é redução ao absurdo."},
+ {key:"final",name:"O Arquiteto",sym:"∴",lv:3,theme:11,liar:true,focus:["condL","iff","xorL","nand","all"],need:3,table:null,final:true,title:"O Cofre do Arquivo",
+  story:"Os nove cartões formam o código do cofre do Arquivo Histórico. Lá dentro está o último manuscrito da Sociedade, e o Arquiteto veio buscá-lo.",
+  lesson:"Tudo o que você aprendeu num caso só: conectivos, quantificadores e depoimentos. Monte a tabela verdade de cabeça e não deixe o Arquiteto escapar."}
+];
+const CH_KINDS=[[],["conj"],["disj"],["condL","condc"],["iff"],["xorL"],["all","count"],["nand","nor"],[],[]];
+const CH_SEED=k=>7001+k*104729;
+function chapterCase(k){
+  const ch=CHAPTERS[k];
+  const mix={};CH_KINDS.slice(0,k+1).flat().forEach(t=>mix[t]=2);
+  const opts={theme:ch.theme,focus:ch.focus,need:ch.need,liar:!!ch.liar,mix,max:LEVELS[ch.lv].max+3};
+  const c=generateCase(ch.lv,CH_SEED(k),opts);
+  c.title=ch.title;c.intro=ch.story+" "+c.intro;c.chapter=k;
+  return c;
+}
+// ---------- caso do dia ----------
+const DAILY=[{lv:3,liar:true},{lv:0},{lv:1},{lv:1},{lv:2},{lv:2},{lv:3}];
+function dailySeed(dk){let h=2166136261;for(const ch of dk){h^=ch.charCodeAt(0);h=Math.imul(h,16777619);}return 1+((h>>>0)%1073741822);}
+function dailyCase(dk){
+  const d=new Date(dk+"T12:00:00"),cfg=DAILY[d.getDay()];
+  const c=generateCase(cfg.lv,dailySeed(dk),{mix:SPICE[cfg.lv],liar:!!cfg.liar,max:LEVELS[cfg.lv].max+2});
+  c.daily=dk;return c;
+}
+
 /*DATA-END*/
-
-// ---------- preparação: solução de cada caso (calculada, não escrita à mão) ----------
-CASES.forEach(c=>{
-  const sols=solve(c);
-  if(sols.length!==1) console.warn("Caso sem solução única:", c.title, sols.length);
-  c.sol=sols[0];
-  c.sol.culprit=c.sol.S.findIndex(p=>c.killer.f(p,c.sol.S));
-  c.size=c.suspects.length;
-});
-
-// ---------- utilidades ----------
+// ================= DEDUTIVO v4: interface =================
+const LV=LEVELS,KEY="dedutivo.v2",OLD="dedutivo.v1",MAXH=40;
 const $=(s,el=document)=>el.querySelector(s);
-function h(tag,attrs={},...kids){
+function h(tag,attrs,...kids){
   const e=document.createElement(tag);
   for(const [k,v] of Object.entries(attrs||{})){
+    if(v==null||v===false) continue;
     if(k==="class") e.className=v;
+    else if(k==="html") e.innerHTML=v;
     else if(k.startsWith("on")) e.addEventListener(k.slice(2),v);
     else if(k==="checked"||k==="disabled") e[k]=v;
-    else e.setAttribute(k,v);
+    else e.setAttribute(k,v===true?"":v);
   }
   for(const kid of kids.flat()){
     if(kid==null||kid===false) continue;
@@ -272,274 +819,757 @@ function h(tag,attrs={},...kids){
   }
   return e;
 }
+const SV=(p,vb)=>`<svg viewBox="${vb||"0 0 24 24"}" focusable="false" aria-hidden="true">${p}</svg>`;
+const IC={
+  refresh:SV('<path d="M256 112A176 176 0 1 0 432 288" fill="none" stroke="currentColor" stroke-width="96"/><path d="M256 6L378 112L256 218Z" fill="currentColor" stroke="currentColor" stroke-width="14" stroke-linejoin="round"/>',"0 0 512 512"),
+  undo:SV('<path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/>'),
+  left:SV('<path d="M15 6l-6 6 6 6"/>'),right:SV('<path d="M9 6l6 6-6 6"/>'),
+  copy:SV('<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h8"/>'),
+  clock:SV('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'),
+  search:SV('<circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/>'),
+  bulb:SV('<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z"/>'),
+  map:SV('<path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14M15 6v14"/>'),
+  cal:SV('<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>'),
+  dice:SV('<rect x="4" y="4" width="16" height="16" rx="3"/><circle cx="9" cy="9" r="1.2" fill="currentColor"/><circle cx="15" cy="15" r="1.2" fill="currentColor"/><circle cx="15" cy="9" r="1.2" fill="currentColor"/><circle cx="9" cy="15" r="1.2" fill="currentColor"/>'),
+  medal:SV('<circle cx="12" cy="15" r="6"/><path d="M8 3l2.5 6.5M16 3l-2.5 6.5M8 3h8"/>'),
+  lock:SV('<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>'),
+  image:SV('<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 17l-5-5-9 8"/>'),
+  share:SV('<circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M8.2 10.8l7.6-3.6M8.2 13.2l7.6 3.6"/>'),
+  book:SV('<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5"/>'),
+  flame:SV('<path d="M12 3c1 4 5 5 5 10a5 5 0 0 1-10 0c0-3 2-4 2-7 1.5 1 2 2.5 2 4 1-2 1-5 1-7z"/>'),
+  download:SV('<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>')
+};
+function icon(n){const s=document.createElement("span");s.className="ico "+(n==="refresh"?"fill":"line");s.setAttribute("aria-hidden","true");s.innerHTML=IC[n];return s;}
+const fmt=t=>{t=t||0;return String(Math.floor(t/60)).padStart(2,"0")+":"+String(t%60).padStart(2,"0");};
+const starStr=n=>"★".repeat(n)+"☆".repeat(3-n);
+const scrollTop=()=>{try{window.scrollTo({top:0,behavior:"smooth"});}catch(e){}};
+const reduced=()=>!!(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+function toast(t){let el=$("#toast");if(!el){el=h("div",{id:"toast",role:"status"});document.body.append(el);}el.textContent=t;el.classList.add("on");clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove("on"),2800);}
+function burst(){
+  if(reduced())return;
+  const cols=["#f0b84a","#5cc08e","#e2645d","#8ab4ff","#ece8dc"];
+  for(let i=0;i<70;i++){const e=h("i",{class:"conf",style:`left:${Math.random()*100}vw;background:${cols[i%5]};--dx:${(Math.random()-.5)*200}px;animation-delay:${Math.random()*.4}s;animation-duration:${1.6+Math.random()*1.4}s`});document.body.append(e);setTimeout(()=>e.remove(),3500);}
+}
+const culpritWord=n=>gOf(n)==="f"?"a culpada":"o culpado";
+
+// ---------- retratos (SVG procedural, um por personagem) ----------
+function hashStr(s){let x=2166136261;for(const ch of s){x^=ch.codePointAt(0);x=Math.imul(x,16777619);}return x>>>0;}
+const SKIN=["#f1d2b6","#e0b48e","#c68e64","#9a6744","#704a30"],HAIRC=["#1f1611","#3b2416","#6b4226","#a5703e","#d9b36c","#8a8a90","#2a2a33"],COATC=["#7b3b3b","#3b5f7b","#4b6b3b","#7b6a3b","#5b3b7b","#3b7b6f","#6e4a2b","#4a4f63"];
+const _pt={};
+function portraitInner(name){
+  if(_pt[name])return _pt[name];
+  const H=hashStr(name),H2=hashStr(name+"#"),b=k=>(H>>>k)&0xff,b2=k=>(H2>>>k)&0xff,g=gOf(name);
+  const skin=SKIN[b(0)%5],hair=HAIRC[b(8)%7],coat=COATC[b(16)%8],bg=`hsl(${(b2(0)*1.41)|0} 24% 21%)`;
+  const style=g==="f"?["long","bob","bun","curly"][b2(8)%4]:["short","short","bald","curly","side"][b2(8)%5];
+  const glasses=b2(16)%10<3,hat=b2(24)%10<(g==="f"?2:3),stache=g==="m"&&b(24)%10<3;
+  let s=`<rect width="64" height="64" rx="12" fill="${bg}"/>`;
+  if(style==="long")s+=`<path d="M18 30C16 11 48 11 46 30L47 52C42 49 41 41 40 35L24 35C23 41 22 49 17 52Z" fill="${hair}"/>`;
+  if(style==="bob")s+=`<path d="M18.5 31C17 11 47 11 45.5 31L45.5 39L40 39L40 31L24 31L24 39L18.5 39Z" fill="${hair}"/>`;
+  s+=`<path d="M6 64C8 49 19 44 32 44C45 44 56 49 58 64Z" fill="${coat}"/><path d="M25 44L32 53L39 44Z" fill="#e9e2d0"/><rect x="27.5" y="35" width="9" height="10" rx="3" fill="${skin}"/><circle cx="21" cy="28.5" r="2.4" fill="${skin}"/><circle cx="43" cy="28.5" r="2.4" fill="${skin}"/><ellipse cx="32" cy="27" rx="11" ry="12.5" fill="${skin}"/>`;
+  const fr=`<path d="M20.5 27C19.5 12 44.5 12 43.5 27C40 20 33 18 26 21C24 22 22 24 20.5 27Z" fill="${hair}"/>`;
+  if(style==="short")s+=`<path d="M20.5 25C20 11.5 44 11.5 43.5 25C41 19 35 17.5 32 17.5C27 17.5 23 19 20.5 25Z" fill="${hair}"/>`;
+  if(style==="side")s+=`<path d="M20.5 26C20 11.5 44 11.5 43.5 24C38 20 30 22 24 18C23 21 22 23 20.5 26Z" fill="${hair}"/>`;
+  if(style==="bald")s+=`<path d="M20.6 29C20 24 21 22 22.5 20.5L23.5 29ZM43.4 29C44 24 43 22 41.5 20.5L40.5 29Z" fill="${hair}"/>`;
+  if(style==="curly")s+=`<g fill="${hair}"><circle cx="21.5" cy="23" r="4.5"/><circle cx="25" cy="17" r="4.8"/><circle cx="31" cy="14.5" r="5"/><circle cx="37" cy="15.5" r="4.8"/><circle cx="41.5" cy="20" r="4.6"/><circle cx="43" cy="25" r="3.6"/></g>`;
+  if(style==="long"||style==="bob"||style==="bun")s+=fr;
+  if(style==="bun"&&!hat)s+=`<circle cx="32" cy="12" r="5" fill="${hair}"/>`;
+  s+=`<circle cx="27.5" cy="28" r="1.5" fill="#1b1410"/><circle cx="36.5" cy="28" r="1.5" fill="#1b1410"/><path d="M25 24.3h5M34 24.3h5" stroke="${hair==="#d9b36c"?"#8a6a3a":hair}" stroke-width="1.4" stroke-linecap="round"/><path d="M29 34.2Q32 36.2 35 34.2" stroke="#7a3a2a" stroke-width="1.3" fill="none" stroke-linecap="round"/>`;
+  if(stache)s+=`<path d="M27.5 32.4Q32 30.4 36.5 32.4Q32 33.6 27.5 32.4Z" fill="${hair}"/>`;
+  if(glasses)s+=`<g fill="none" stroke="#d9b36c" stroke-width="1.2"><circle cx="27.5" cy="28" r="3.6"/><circle cx="36.5" cy="28" r="3.6"/><path d="M31.1 28h1.8"/></g>`;
+  if(hat)s+=g==="m"?`<path d="M14 19.5C22 16.8 42 16.8 50 19.5C42 21.8 22 21.8 14 19.5Z" fill="#1d1612"/><path d="M22 19C22 8.5 42 8.5 42 19Z" fill="#1d1612"/><path d="M22 16.3h20v2.6H22Z" fill="#7a2a22"/>`:`<ellipse cx="34" cy="15" rx="13" ry="5" fill="#7a2a22"/><circle cx="34" cy="10.5" r="1.4" fill="#7a2a22"/>`;
+  return _pt[name]=s;
+}
+const portraitSVG=(name,attrs)=>`<svg ${attrs||""} viewBox="0 0 64 64" aria-hidden="true" focusable="false">${portraitInner(name)}</svg>`;
+const pic=(name,cls)=>h("span",{class:"pic "+(cls||""),html:portraitSVG(name)});
+
+// ---------- notação formal dos casos clássicos ----------
+const CLASSIC_FX=[
+ {c:["p(Bruno) + n(Bruno) = 3","p(Carla) · n(Carla) = 3","ímpar(n(Ana))"],k:"C(x) ↔ primo(n(x)) ∧ par(n(x))"},
+ {c:["p(Fábio) + n(Fábio) = 10","p(Gabi) · n(Gabi) = 8","ímpar(n(Érico))","¬Arma(Fábio, Veneno)","p(Diana) > p(Érico)"],k:"C(x) ↔ n(x) | p(x) ∧ ímpar(p(x) / n(x))"},
+ {c:["n(Hugo) + n(Iara) = 9","|p(Hugo) − p(Iara)| = 3","p(Lia) · n(Lia) = 6","¬Local(Hugo, Adega)","p(Iara) < p(Hugo)"],k:"C(x) ↔ ∀y ≠ x: p(y) + n(y) < p(x) + n(x)"},
+ {c:["p(Marta) + p(Paula) = 9","n(Marta) · n(Rui) = 6","ímpar(n(Rui))","|n(Nilo) − n(Otávio)| = 1","p(Rui) = n(Rui) + 1","∀y: p(Nilo) ≤ p(y)","p(Marta) > p(Paula)","n(Nilo) = 4 → p(Otávio) = 1"],k:"C(x) ↔ p(x) = 2 · n(x)"}
+];
+CASES.forEach((c,i)=>{c.lv=i;c.clues.forEach((cl,j)=>cl.fx=CLASSIC_FX[i].c[j]);c.killer.fx=CLASSIC_FX[i].k;});
 
 // ---------- progresso salvo ----------
-const KEY="dedutivo.v1";
-let save;
-try{ save=JSON.parse(localStorage.getItem(KEY)); }catch(e){ save=null; }
-if(!save||typeof save!=="object") save={};
-save.cases=save.cases||{}; if(save.auto===undefined) save.auto=true; if(save.current===undefined) save.current=0;
-function persist(){ try{ localStorage.setItem(KEY,JSON.stringify(save)); }catch(e){} }
-function caseState(i){
-  if(!save.cases[i]){
-    const n=CASES[i].size, mk=()=>Array.from({length:n},()=>Array(n).fill(0));
-    save.cases[i]={g:[mk(),mk(),mk()],struck:[],errors:0,hints:0,solved:false,stars:0,answer:["","",""],notes:""};
+const mkG=n=>Array.from({length:n},()=>Array(n).fill(0));
+function fixRec(r,n){
+  if(!Array.isArray(r.g)||r.g.length!==3||!r.g.every(g=>Array.isArray(g)&&g.length===n&&g.every(x=>Array.isArray(x)&&x.length===n)))r.g=[mkG(n),mkG(n),mkG(n)];
+  if(typeof r.notes!=="string")r.notes="";if(!["notes","board"].includes(r.tab))r.tab="grid";if(!Array.isArray(r.struck))r.struck=[];
+  if(!Array.isArray(r.answer)||r.answer.length!==3)r.answer=["","",""];if(!Array.isArray(r.sm))r.sm=[];if(!Array.isArray(r.htxt))r.htxt=[];
+  r.t=r.t|0;r.hints=r.hints|0;r.checks=r.checks|0;r.errors=r.errors|0;r.ht=r.ht|0;
+  return r;
+}
+function mkRec(id,n,extra){return fixRec(Object.assign({id,solved:false,stars:0},extra||{}),n);}
+function newRec(l,o){
+  o=o||{};const n=LV[l].n,cl=o.classic!=null;
+  return mkRec(cl?"C"+l:LV[l].key+"-"+o.seed.toString(36).toUpperCase(),n,{classic:cl?o.classic:null,seed:cl?null:o.seed});
+}
+function loadSave(){
+  let s=null;try{s=JSON.parse(localStorage.getItem(KEY));}catch(e){}
+  if(!s||typeof s!=="object"||!Array.isArray(s.levels)){
+    s={v:2,auto:true,fill:true,level:0,seen:false,levels:[]};
+    let old=null;try{old=JSON.parse(localStorage.getItem(OLD));}catch(e){}
+    for(let l=0;l<4;l++){
+      const r=newRec(l,{classic:l}),o=old&&old.cases&&old.cases[l];
+      if(o&&Array.isArray(o.g)&&o.g.length===3){
+        r.g=o.g;r.struck=Array.isArray(o.struck)?o.struck:[];r.errors=o.errors|0;r.hints=o.hints|0;r.solved=!!o.solved;r.stars=o.stars|0;
+        r.notes=typeof o.notes==="string"?o.notes:"";r.t=o.t|0;r.answer=Array.isArray(o.answer)&&o.answer.length===3?o.answer.map(a=>a==null?"":String(a)):["","",""];
+      }
+      s.levels.push({idx:0,list:[r]});
+    }
+    if(old){s.auto=old.auto!==false;s.fill=old.fill!==false;s.seen=true;s.level=Math.min(Math.max(old.current|0,0),3);}
   }
-  return save.cases[i];
+  for(let l=0;l<4;l++){
+    const n=LV[l].n;let lv=s.levels[l];if(!lv||!Array.isArray(lv.list)){lv=s.levels[l]={idx:0,list:[]};}
+    lv.list=lv.list.filter(r=>r&&typeof r.id==="string").map(r=>fixRec(r,n));
+    if(!lv.list.length)lv.list=[newRec(l,{classic:l})];
+    lv.idx=Math.min(Math.max(lv.idx|0,0),lv.list.length-1);
+  }
+  s.level=Math.min(Math.max(s.level|0,0),3);if(s.auto===undefined)s.auto=true;if(s.fill===undefined)s.fill=true;
+  if(!["camp","daily","free","ach"].includes(s.mode))s.mode="camp";
+  s.formal=!!s.formal;
+  if(!s.camp||typeof s.camp!=="object")s.camp={};if(!s.camp.recs||typeof s.camp.recs!=="object")s.camp.recs={};
+  if(!Number.isInteger(s.camp.open))s.camp.open=null;s.camp.unlocked=!!s.camp.unlocked;
+  for(const k in s.camp.recs){const ch=CHAPTERS[+k];if(!ch)delete s.camp.recs[k];else fixRec(s.camp.recs[k],LV[ch.lv].n);}
+  if(!s.daily||typeof s.daily!=="object")s.daily={};if(!s.daily.recs||typeof s.daily.recs!=="object")s.daily.recs={};
+  if(!Array.isArray(s.daily.done))s.daily.done=[];
+  for(const k in s.daily.recs){if(!/^\d{4}-\d\d-\d\d$/.test(k))delete s.daily.recs[k];else fixRec(s.daily.recs[k],LV[dailyCfg(k).lv].n);}
+  if(!s.ach||typeof s.ach!=="object")s.ach={};
+  return s;
 }
-let cur=Math.min(Math.max(+save.current||0,0),CASES.length-1);
+function dailyCfg(dk){return DAILY[new Date(dk+"T12:00:00").getDay()];}
+let save=loadSave();
+function persist(){try{localStorage.setItem(KEY,JSON.stringify(save));}catch(e){}}
+const hist={};
 
-const GRIDS=[
-  {rows:"suspects",cols:"weapons",title:"Suspeitos × Armas"},
-  {rows:"suspects",cols:"rooms",title:"Suspeitos × Cômodos"},
-  {rows:"weapons",cols:"rooms",title:"Armas × Cômodos"}
+// ---------- casos ----------
+const cache=new Map();
+function prepare(c){
+  if(c.sol)return c;
+  const sols=solve(c);
+  if(sols.length!==1)console.warn("Caso sem solução única:",c.title,sols.length);
+  c.sol=sols[0];c.sol.culprit=c.sol.S.findIndex(p=>c.killer.f(p,c.sol.S));c.size=c.suspects.length;
+  return c;
+}
+function buildCase(rec){
+  const id=rec.id;
+  if(rec.classic!=null)return CASES[rec.classic];
+  if(id[0]==="K")return chapterCase(+id.slice(1));
+  if(id[0]==="D")return dailyCase(id.slice(1));
+  return generateCase(LV.findIndex(L=>L.key===id[0]),rec.seed);
+}
+function getCase(rec){
+  if(cache.has(rec.id))return cache.get(rec.id);
+  const c=prepare(buildCase(rec));cache.set(rec.id,c);
+  if(rec.g[0].length!==c.size)fixRec(Object.assign(rec,{g:null}),c.size);
+  return c;
+}
+function trim(lv){
+  while(lv.list.length>MAXH){
+    let k=lv.list.findIndex((r,i)=>i!==lv.idx&&r.solved);if(k<0)k=lv.list.findIndex((r,i)=>i!==lv.idx);
+    if(k<0)break;lv.list.splice(k,1);if(k<lv.idx)lv.idx--;
+  }
+}
+let busy=false;
+function newCase(l,btn){
+  if(busy)return;busy=true;
+  if(btn){btn.classList.add("spin");btn.disabled=true;}
+  const t0=Date.now();
+  setTimeout(()=>{
+    let rec=null;
+    try{const seed=1+Math.floor(Math.random()*1073741822);rec=newRec(l,{seed});getCase(rec);}catch(e){console.error(e);rec=null;}
+    setTimeout(()=>{
+      busy=false;
+      if(rec){const lv=save.levels[l];lv.list.push(rec);lv.idx=lv.list.length-1;trim(lv);save.level=l;save.mode="free";persist();}
+      else toast("Não consegui gerar um caso agora. Tente de novo.");
+      render();scrollTop();
+    },Math.max(0,520-(Date.now()-t0)));
+  },40);
+}
+function openCode(txt){
+  const m=/^\s*#?([AIPM])-?([0-9A-Za-z]{1,7})\s*$/i.exec(txt||"");
+  if(!m)return"Código inválido. Exemplo: P-1K3Z9A";
+  const l=LV.findIndex(x=>x.key===m[1].toUpperCase()),seed=parseInt(m[2],36);
+  if(!(seed>0)||seed>2147483647)return"Código inválido. Exemplo: P-1K3Z9A";
+  const lv=save.levels[l],id=LV[l].key+"-"+seed.toString(36).toUpperCase();
+  let k=lv.list.findIndex(r=>r.id===id);
+  if(k<0){try{const rec=newRec(l,{seed});getCase(rec);lv.list.push(rec);k=lv.list.length-1;}catch(e){return"Não consegui abrir esse código.";}}
+  lv.idx=k;save.level=l;save.mode="free";trim(lv);persist();render();scrollTop();return null;
+}
+// campanha
+function campRec(k){return save.camp.recs[k]||(save.camp.recs[k]=mkRec("K"+k,LV[CHAPTERS[k].lv].n));}
+const campSolved=k=>!!(save.camp.recs[k]&&save.camp.recs[k].solved);
+const chapterOpen=k=>k===0||(k<9?campSolved(k-1):save.camp.unlocked);
+function fragment(k){const c=getCase(campRec(k)),p=c.sol.S[c.sol.culprit];return(p.w+p.r)%10;}
+const campCode=()=>CHAPTERS.slice(0,9).map((_,k)=>fragment(k)).join("");
+// caso do dia
+const dkOf=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+const todayKey=()=>dkOf(new Date());
+const dkBR=dk=>dk.split("-").reverse().join("/");
+function dailyRec(dk){
+  if(!save.daily.recs[dk]){save.daily.recs[dk]=mkRec("D"+dk,LV[dailyCfg(dk).lv].n);
+    const ks=Object.keys(save.daily.recs).sort();while(ks.length>10){const k=ks.shift();if(k!==dk)delete save.daily.recs[k];}}
+  return save.daily.recs[dk];
+}
+function streak(){
+  const done=new Set(save.daily.done),d=new Date();if(!done.has(dkOf(d)))d.setDate(d.getDate()-1);
+  let s=0;while(done.has(dkOf(d))){s++;d.setDate(d.getDate()-1);}return s;
+}
+
+// ---------- caderno: lógica ----------
+function hl(b){document.querySelectorAll(".hr,.hc").forEach(x=>x.classList.remove("hr","hc"));if(!b)return;const tr=b.closest("tr"),tb=b.closest("table"),k=[...tr.children].indexOf(b.parentElement);tr.classList.add("hr");tb.querySelectorAll("tr").forEach(r=>r.children[k]&&r.children[k].classList.add("hc"));}
+const isBad=(g,r,k)=>g[r][k]===2&&(g[r].filter(x=>x===2).length>1||g.filter(row=>row[k]===2).length>1);
+function autoX(g,r,k){if(!save.auto)return;g[r].forEach((_,j)=>{if(j!==k&&g[r][j]===0)g[r][j]=1;});g.forEach((row,i)=>{if(i!==r&&row[k]===0)row[k]=1;});}
+function fillObvious(g){let ch=true;while(ch){ch=false;for(let i=0;i<g.length;i++){const row=g[i],z=row.map((v,j)=>v===0?j:-1).filter(j=>j>=0);if(z.length===1&&!row.includes(2)){row[z[0]]=2;ch=true;autoX(g,i,z[0]);}const col=g.map(r=>r[i]),zc=col.map((v,j)=>v===0?j:-1).filter(j=>j>=0);if(zc.length===1&&!col.includes(2)){g[zc[0]][i]=2;ch=true;autoX(g,zc[0],i);}}}}
+function mark(rec,gi,r,k,nv){
+  const hs=hist[rec.id]=hist[rec.id]||[];hs.push(JSON.stringify(rec.g));if(hs.length>60)hs.shift();
+  const grid=rec.g[gi];grid[r][k]=nv;
+  if(nv===2)autoX(grid,r,k);
+  if(nv!==0&&save.fill!==false)fillObvious(grid);
+  persist();
+}
+const truthCell=(s,gi,a,b)=>gi===0?s.pw[a]===b:gi===1?s.pr[a]===b:s.pr[s.pw.indexOf(a)]===b;
+function checkNotebook(c,rec){
+  let wrong=0;
+  rec.g.forEach((grid,gi)=>grid.forEach((row,a)=>row.forEach((v,b)=>{if(v===0)return;const t=truthCell(c.sol,gi,a,b);if((v===2&&!t)||(v===1&&t))wrong++;})));
+  return wrong;
+}
+function fichas(c,rec){
+  const n=c.size,sw=Array(n).fill(-1),sr=Array(n).fill(-1),wr=Array(n).fill(-1),inf={w:Array(n).fill(false),r:Array(n).fill(false)};
+  rec.g[0].forEach((row,i)=>row.forEach((v,k)=>{if(v===2)sw[i]=k;}));
+  rec.g[1].forEach((row,i)=>row.forEach((v,k)=>{if(v===2)sr[i]=k;}));
+  rec.g[2].forEach((row,w)=>row.forEach((v,k)=>{if(v===2)wr[w]=k;}));
+  for(let i=0;i<n;i++){
+    if(sr[i]<0&&sw[i]>=0&&wr[sw[i]]>=0){sr[i]=wr[sw[i]];inf.r[i]=true;}
+    if(sw[i]<0&&sr[i]>=0){const w=wr.indexOf(sr[i]);if(w>=0){sw[i]=w;inf.w[i]=true;}}
+  }
+  return{sw,sr,wr,inf,left:{w:rec.g[0].map(r=>r.filter(v=>v!==1).length),r:rec.g[1].map(r=>r.filter(v=>v!==1).length)}};
+}
+
+// ---------- assistente de dedução (dicas em 3 níveis) ----------
+const GRN=["Suspeitos × Armas","Suspeitos × Cômodos","Armas × Cômodos"];
+function statesOf(c){return c._st||(c._st=buildStates(c));}
+function forcedCells(c,rec,set){
+  if(!set.length)return[];
+  const n=c.size,cnt=[0,1,2].map(()=>Array.from({length:n},()=>Array(n).fill(0)));
+  for(const s of set)for(let i=0;i<n;i++){cnt[0][i][s.pw[i]]++;cnt[1][i][s.pr[i]]++;cnt[2][s.pw[i]][s.pr[i]]++;}
+  const out=[];
+  for(let gi=0;gi<3;gi++)for(let a=0;a<n;a++)for(let b=0;b<n;b++){
+    const v=rec.g[gi][a][b],k=cnt[gi][a][b];
+    if(k===0&&v!==1)out.push([gi,a,b,1]);else if(k===set.length&&v!==2)out.push([gi,a,b,2]);
+  }
+  return out;
+}
+function deduce(c,rec){
+  const marks=[];rec.g.forEach((g,gi)=>g.forEach((row,a)=>row.forEach((v,b)=>{if(v)marks.push([gi,a,b,v]);})));
+  const ok=s=>marks.every(([gi,a,b,v])=>truthCell(s,gi,a,b)===(v===2));
+  if(!ok(c.sol))return{kind:"wrong"};
+  const A=statesOf(c).filter(ok);
+  const cons=[];if(c.base)cons.push({label:"os depoimentos, junto com a pista final",f:c.base});
+  c.clues.forEach((cl,i)=>cons.push({label:`a pista ${i+1}`,num:i+1,f:cl.f}));
+  let fc=forcedCells(c,rec,A);if(fc.length)return{kind:"cross",cells:fc};
+  let best=null;
+  for(const k of cons){const B=A.filter(s=>k.f(s.S)),f=forcedCells(c,rec,B);if(f.length&&(!best||f.length>best.cells.length))best={kind:"one",use:[k],cells:f};}
+  if(best)return best;
+  for(let i=0;i<cons.length&&!best;i++)for(let j=i+1;j<cons.length;j++){
+    const B=A.filter(s=>cons[i].f(s.S)&&cons[j].f(s.S)),f=forcedCells(c,rec,B);
+    if(f.length&&(!best||f.length>best.cells.length))best={kind:"two",use:[cons[i],cons[j]],cells:f};
+  }
+  if(best)return best;
+  const B=A.filter(s=>cons.every(k=>k.f(s.S)));fc=forcedCells(c,rec,B);
+  if(fc.length)return{kind:"all",use:cons,cells:fc};
+  return{kind:"done"};
+}
+function cellText(c,[gi,a,b,v]){
+  if(gi===0)return`${c.suspects[a]} ${v===2?"usou":"não usou"} ${art(c.weapons[b])}`;
+  if(gi===1)return`${c.suspects[a]} ${v===2?"esteve":"não esteve"} ${prep(c.rooms[b])}`;
+  return`${cap(art(c.weapons[a]))} ${v===2?"esteve":"não esteve"} ${prep(c.rooms[b])}`;
+}
+function rowText(c,[gi,a]){return gi===2?art(c.weapons[a]):c.suspects[a];}
+function hintSteps(c,d){
+  if(d.kind==="wrong")return["Antes de seguir: há pelo menos uma marca no caderno que contradiz as pistas. Revise as últimas marcações (o botão Desfazer ajuda)."];
+  if(d.kind==="done"){const k=c.sol.culprit;return["Seu caderno já tem tudo o que importa. Agora aplique a pista final a cada suspeito.",
+    `Calcule, para cada pessoa, o que a pista final pede: ${c.suspects.map((n,i)=>`${n} (peso ${c.sol.S[i].w}, cômodo ${c.sol.S[i].r})`).join(", ")}.`,
+    `A pista final aponta para ${c.suspects[k]}.`];}
+  const cell=d.cells.find(x=>x[3]===2)||d.cells[0];
+  const label=d.kind==="cross"?null:d.kind==="all"?"todas as pistas juntas":d.use.length===2?`${d.use[0].label} e ${d.use[1].label}, juntas`:d.use[0].label;
+  const t1=d.kind==="cross"?"Você não precisa de pista nova: cruze os três quadros com o que já marcou.":`Olhe com atenção ${label}.`;
+  const t2=d.kind==="cross"?`Repare no quadro ${GRN[cell[0]]}, na linha de ${rowText(c,cell)}.`:`Com ${label} e o que você já marcou, dá para concluir algo sobre ${rowText(c,cell)} no quadro ${GRN[cell[0]]}.`;
+  const t3=`Conclusão: ${cellText(c,cell)}. Em todas as possibilidades que sobram, isso sempre acontece.`;
+  return[t1,t2,t3];
+}
+
+// ---------- texto das pistas com destaque ----------
+function rich(t,c){
+  const names=[...c.suspects.map(n=>[n,"s"]),...c.weapons.map(w=>[w.n,"w"]),...c.rooms.map(r=>[r.n,"r"])].sort((a,b)=>b[0].length-a[0].length);
+  const kind={};names.forEach(x=>kind[x[0]]=x[1]);
+  const esc=s=>s.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+  const re=new RegExp("("+names.map(x=>esc(x[0])).join("|")+"|\\d+)","g"),isL=ch=>!!ch&&/[\p{L}\d]/u.test(ch);
+  const out=[];let last=0,m;
+  while((m=re.exec(t))){
+    const tok=m[0],a=m.index,b=a+tok.length,num=/^\d+$/.test(tok);
+    if(!num&&(isL(t[a-1])||isL(t[b]))){re.lastIndex=a+1;continue;}
+    if(a>last)out.push(t.slice(last,a));
+    out.push(h("span",{class:num?"num":"tk-"+kind[tok]},tok));last=b;
+  }
+  if(last<t.length)out.push(t.slice(last));
+  return out;
+}
+const fxEl=fx=>save.formal&&fx?h("code",{class:"fx"},fx):null;
+
+// ---------- conquistas ----------
+const ACH=[
+ {id:"first",sym:"1",name:"Primeiro caso",d:"Resolva qualquer caso."},
+ {id:"perfect",sym:"★",name:"Sem deixar rastro",d:"Resolva um caso com 3 estrelas."},
+ {id:"fast",sym:"2′",name:"Relâmpago",d:"Resolva um caso de Investigador ou acima em menos de 2 minutos."},
+ {id:"master",sym:"M",name:"Mestre da dedução",d:"Resolva um caso Mestre com 3 estrelas."},
+ {id:"liar",sym:"V/F",name:"Detector de mentiras",d:"Resolva um caso com depoimentos."},
+ {id:"formal",sym:"∴",name:"Lógico formal",d:"Resolva um caso com a notação formal ligada."},
+ {id:"camp3",sym:"∧∨",name:"Aprendiz de lógica",d:"Conclua 3 capítulos da campanha."},
+ {id:"camp9",sym:"∀",name:"Nove cartões",d:"Conclua os 9 capítulos da campanha."},
+ {id:"final",sym:"Ω",name:"O Arquiteto caiu",d:"Resolva o caso final da campanha."},
+ {id:"daily",sym:"D",name:"Pontual",d:"Resolva um caso do dia."},
+ {id:"streak3",sym:"3d",name:"Rotina de detetive",d:"Resolva o caso do dia 3 dias seguidos."},
+ {id:"streak7",sym:"7d",name:"Semana perfeita",d:"Resolva o caso do dia 7 dias seguidos."},
+ {id:"ten",sym:"10",name:"Arquivo cheio",d:"Resolva 10 casos."}
 ];
-function items(c,kind){ return kind==="suspects"?c.suspects.map(n=>({n})):c[kind]; }
-function lab(it){ return h("span",{class:"lab"},it.n,it.v!=null?h("b",{},it.v):null); }
-function starStr(n){ return "★".repeat(n)+"☆".repeat(3-n); }
+function allRecs(){const out=[];save.levels.forEach(lv=>lv.list.forEach(r=>out.push(r)));Object.values(save.camp.recs).forEach(r=>out.push(r));Object.values(save.daily.recs).forEach(r=>out.push(r));return out;}
+function checkAch(){
+  const rs=allRecs().filter(r=>r.solved),cs=CHAPTERS.slice(0,9).filter((_,k)=>campSolved(k)).length,st=streak();
+  const cond={first:rs.length>0,perfect:rs.some(r=>r.stars===3),fast:rs.some(r=>(r.lv|0)>=1&&r.t<120),master:rs.some(r=>r.lv===3&&r.stars===3),
+    liar:rs.some(r=>r.liar),formal:rs.some(r=>r.formalUsed),camp3:cs>=3,camp9:cs>=9,final:campSolved(9),daily:save.daily.done.length>0,
+    streak3:st>=3,streak7:st>=7,ten:rs.length+save.daily.done.filter(d=>!save.daily.recs[d]).length>=10};
+  const fresh=ACH.filter(a=>cond[a.id]&&!save.ach[a.id]);
+  fresh.forEach(a=>save.ach[a.id]=todayKey());
+  return fresh;
+}
 
-// ---------- componentes ----------
+// ---------- compartilhar ----------
+function shareText(ctx,rec){return`Dedutivo · ${ctx.label} · ${rec.stars}/3 estrelas · ${fmt(rec.t)}${rec.hints+rec.checks?"":" · sem ajuda"}${rec.errors?"":" · sem erros"}`;}
+function shareCanvas(ctx,c,rec){
+  const cv=document.createElement("canvas");cv.width=1200;cv.height=630;const x=cv.getContext("2d");if(!x)return null;
+  const g=x.createLinearGradient(0,0,1200,630);g.addColorStop(0,"#0f1218");g.addColorStop(1,"#212736");x.fillStyle=g;x.fillRect(0,0,1200,630);
+  x.strokeStyle="#f0b84a";x.lineWidth=6;x.strokeRect(24,24,1152,582);
+  x.lineWidth=10;x.beginPath();x.arc(140,140,46,0,7);x.stroke();x.lineWidth=16;x.lineCap="round";x.beginPath();x.moveTo(176,176);x.lineTo(222,222);x.stroke();
+  x.fillStyle="#f0b84a";x.font="700 64px Georgia,serif";x.fillText("DEDUTIVO",250,160);
+  x.fillStyle="#9aa3b5";x.font="30px system-ui,sans-serif";x.fillText(ctx.label,80,300);
+  x.fillStyle="#ece8dc";x.font="700 50px Georgia,serif";x.fillText(c.title,80,370);
+  const star=(cx,cy,on)=>{x.beginPath();for(let i=0;i<10;i++){const r=i%2?22:52,a=-Math.PI/2+i*Math.PI/5;x.lineTo(cx+r*Math.cos(a),cy+r*Math.sin(a));}x.closePath();if(on){x.fillStyle="#f0b84a";x.fill();}else{x.strokeStyle="#f0b84a";x.lineWidth=4;x.stroke();}};
+  for(let i=0;i<3;i++)star(140+i*130,480,i<rec.stars);
+  x.fillStyle="#ece8dc";x.font="600 34px ui-monospace,Menlo,monospace";x.fillText(`Tempo ${fmt(rec.t)}`,560,470);
+  x.fillStyle="#9aa3b5";x.font="28px system-ui,sans-serif";x.fillText(`${rec.errors} erro(s) · ${rec.hints+rec.checks} ajuda(s)`,560,520);
+  return cv;
+}
+function shareRow(ctx,c,rec){
+  const txt=shareText(ctx,rec);
+  return[
+    h("button",{type:"button",class:"btn ghost",onclick:()=>{(navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject()).then(()=>toast("Resultado copiado"),()=>toast(txt));}},icon("copy"),"Copiar resultado"),
+    h("button",{type:"button",class:"btn ghost",onclick:()=>{
+      const cv=shareCanvas(ctx,c,rec);if(!cv||!cv.toBlob){toast("Seu navegador não gera imagens.");return;}
+      cv.toBlob(b=>{if(!b)return;const f=new File([b],"dedutivo.png",{type:"image/png"});
+        if(navigator.canShare&&navigator.canShare({files:[f]}))navigator.share({files:[f],text:txt}).catch(()=>{});
+        else{const a=h("a",{href:URL.createObjectURL(b),download:"dedutivo.png"});document.body.append(a);a.click();a.remove();toast("Imagem salva");}
+      },"image/png");}},icon("image"),"Imagem do resultado")
+  ];
+}
+
+// ---------- componentes do caso ----------
+function totals(){let stars=0,solved=0;allRecs().forEach(r=>{if(r.solved){stars+=r.stars;solved++;}});return{stars,solved};}
 function renderTop(){
-  const total=CASES.reduce((s,_,i)=>s+((save.cases[i]&&save.cases[i].solved)?save.cases[i].stars:0),0);
-  $("#total").replaceChildren("Estrelas ",h("b",{},`${total}/${CASES.length*3}`));
+  const t=totals(),st=streak();
+  $("#total").replaceChildren(h("span",{class:"pill"},"Estrelas ",h("b",{},t.stars)),h("span",{class:"pill"},"Resolvidos ",h("b",{},t.solved)),
+    h("span",{class:"pill",title:"Dias seguidos resolvendo o caso do dia"},icon("flame"),"Sequência ",h("b",{},st)));
 }
-function renderTabs(){
-  return h("nav",{class:"tabs","aria-label":"Casos"},CASES.map((c,i)=>{
-    const st=save.cases[i];
-    return h("button",{class:"tab"+(i===cur?" on":""),"aria-current":i===cur?"true":"false",onclick:()=>{cur=i;save.current=i;persist();render();}},
-      `Caso ${i+1}`,h("small",{},c.level),
-      h("span",{class:"st"},st&&st.solved?starStr(st.stars):""));
-  }));
-}
-function howTo(){
-  const anyProgress=Object.keys(save.cases).length>0;
-  const d=h("details",{class:"how"},
-    h("summary",{},"Como jogar"),
-    h("ul",{},
-      h("li",{},"Cada suspeito usou ",h("b",{},"uma arma")," em ",h("b",{},"um cômodo"),". Nenhuma arma nem cômodo se repete."),
-      h("li",{},"Armas têm um ",h("b",{},"peso")," e cômodos têm um ",h("b",{},"número"),". As pistas usam soma, produto, diferença, paridade, divisão e comparações."),
-      h("li",{},"No caderno, toque numa casa para marcar ✗ (descartado), depois ✓ (confirmado). Cruze os três quadros: se Ana usou a Faca e a Faca esteve na Cozinha, então Ana esteve na Cozinha."),
-      h("li",{},"Resolva as pistas numeradas e use a ",h("b",{},"pista final")," para apontar o culpado. Depois acuse: suspeito, arma e cômodo."),
-      h("li",{},"3 estrelas para quem resolve sem erros e sem dicas.")
-    ));
-  if(!anyProgress) d.open=true;
-  return d;
+function modeNav(){
+  const M=[["camp","Campanha","map"],["daily","Caso do dia","cal"],["free","Jogo livre","dice"],["ach","Conquistas","medal"]];
+  return h("nav",{class:"modes","aria-label":"Modos de jogo"},M.map(([k,label,ic])=>h("button",{type:"button",class:"mode"+(save.mode===k?" on":""),"aria-current":save.mode===k?"page":"false",onclick:()=>{save.mode=k;persist();render();scrollTop();}},icon(ic),label)));
 }
 function castCard(c){
-  return h("section",{class:"card"},h("h3",{},"Elenco"),
+  return h("section",{class:"card cast-card"},h("h3",{},"Elenco"),
     h("div",{class:"cast"},
-      h("div",{},h("h4",{},"Suspeitos"),h("ul",{class:"chips"},c.suspects.map(n=>h("li",{},n)))),
-      h("div",{},h("h4",{},"Armas ",h("small",{},"(peso)")),h("ul",{class:"chips"},c.weapons.map(w=>h("li",{},w.n,h("b",{},w.v))))),
-      h("div",{},h("h4",{},"Cômodos ",h("small",{},"(número)")),h("ul",{class:"chips"},c.rooms.map(r=>h("li",{},r.n,h("b",{},r.v)))))
-    ));
+      h("div",{},h("h4",{},"Suspeitos"),h("ul",{class:"people"},c.suspects.map(n=>h("li",{},pic(n),h("div",{},h("b",{},n),h("span",{class:"bio"},bioOf(n))))))),
+      h("div",{},h("h4",{},"Armas ",h("small",{},"(peso)")),h("ul",{class:"chips w"},c.weapons.map(w=>h("li",{},w.n,h("b",{},w.v))))),
+      h("div",{},h("h4",{},"Cômodos ",h("small",{},"(número)")),h("ul",{class:"chips r"},c.rooms.map(r=>h("li",{},r.n,h("b",{},r.v)))))));
 }
-function cluesCard(c,st){
+function formalSwitch(){
+  return h("label",{class:"switch",title:"Mostra cada pista também em linguagem da lógica"},h("input",{type:"checkbox",checked:save.formal,onchange:e=>{save.formal=e.target.checked;persist();render();}}),h("span",{class:"knob","aria-hidden":"true"}),"Notação formal");
+}
+const LEGEND="p(x): peso da arma de x · n(x): número do cômodo de x · Arma(x, A): x usou A · Local(x, C): x esteve em C · C(x): x é o culpado · a | b: a divide b";
+const cprog=(c,rec)=>`${rec.struck.length}/${c.clues.length} pistas riscadas · toque para riscar as que já usou.`;
+function stmtCard(c,rec){
+  const card=h("section",{class:"card stmt-card"});
+  const lbl=["?","verdade","mentira"];
+  const draw=()=>card.replaceChildren(h("h3",{},"Depoimentos"),
+    h("p",{class:"rule"},"Regra: ",h("b",{},"o culpado mente"),"; todos os outros dizem a verdade."),
+    save.formal?h("code",{class:"fx block"},"∀x: C(x) ↔ ¬Diz(x)"):null,
+    h("ul",{class:"stmts"},c.stmts.map((st,i)=>h("li",{},pic(c.suspects[st.by]),h("div",{class:"sbody"},h("b",{},c.suspects[st.by]),h("q",{},rich(st.t,c)),fxEl(st.fx)),
+      h("button",{type:"button",class:"tv t"+(rec.sm[i]|0),title:"Marque sua hipótese sobre este depoimento",onclick:()=>{rec.sm[i]=((rec.sm[i]|0)+1)%3;persist();draw();}},lbl[rec.sm[i]|0])))));
+  draw();return card;
+}
+function cluesCard(c,rec){
   const ol=h("ol",{class:"clues"});
   c.clues.forEach((cl,i)=>{
-    const on=st.struck.includes(i);
-    const b=h("button",{type:"button",class:"clue"+(on?" done":""),"aria-pressed":String(on),
-      title:"Toque para riscar a pista quando já tiver usado",
-      onclick:()=>{
-        const k=st.struck.indexOf(i);
-        if(k>=0) st.struck.splice(k,1); else st.struck.push(i);
-        persist(); b.classList.toggle("done",k<0); b.setAttribute("aria-pressed",String(k<0));
-      }},cl.t);
+    const on=rec.struck.includes(i);
+    const b=h("button",{type:"button",class:"clue"+(on?" done":""),"aria-pressed":String(on),title:"Toque para riscar a pista quando já tiver usado",
+      onclick:()=>{const k=rec.struck.indexOf(i);if(k>=0)rec.struck.splice(k,1);else rec.struck.push(i);persist();$("#cprog").textContent=cprog(c,rec);b.classList.toggle("done",k<0);b.setAttribute("aria-pressed",String(k<0));}},
+      h("span",{},rich(cl.t,c)),fxEl(cl.fx));
     ol.append(h("li",{},b));
   });
-  return h("section",{class:"card"},h("h3",{},"Pistas"),ol,
-    h("div",{class:"finalclue"},h("span",{class:"tag"},"Pista final"),c.killer.t),
-    h("p",{class:"mute small"},"Toque numa pista para riscá-la quando já tiver usado."));
+  return h("section",{class:"card clues-card"},h("div",{class:"cardhead"},h("h3",{},"Pistas"),formalSwitch()),
+    save.formal?h("p",{class:"legend"},LEGEND):null,ol,
+    h("div",{class:"finalclue"},h("span",{class:"tag"},"Pista final"),c.killer.t,fxEl(c.killer.fx)),
+    h("p",{class:"mute small",id:"cprog"},cprog(c,rec)));
 }
-function hintCard(c,st){
-  const box=h("section",{class:"card"});
+let redrawWork=()=>{};
+function helpCard(c,rec){
+  const box=h("section",{class:"card hint-card"});
   const draw=()=>{
-    box.replaceChildren(h("h3",{},"Dicas"));
-    if(st.hints>0) c.hints.slice(0,st.hints).forEach(t=>box.append(h("p",{class:"hint"},t)));
-    else box.append(h("p",{class:"mute small"},"Travou? Cada caso tem até 2 dicas. Usar dicas custa 1 estrela."));
-    if(!st.solved&&st.hints<c.hints.length)
-      box.append(h("button",{type:"button",class:"btn ghost sm",onclick:()=>{st.hints++;persist();draw();}},st.hints?"Outra dica":"Pedir dica"));
+    box.replaceChildren(h("h3",{},"Assistente de dedução"));
+    if(!rec.htxt.length)box.append(h("p",{class:"mute small"},"Travou? Peça uma dica: primeiro eu aponto onde olhar, depois o que dá para concluir e, por fim, a conclusão. Qualquer ajuda custa 1 estrela (uma só por caso)."));
+    rec.htxt.forEach((t,i)=>box.append(h("p",{class:"hint"},h("span",{class:"tier"},`Nível ${i+1}`),t)));
+    if(rec.solved)return;
+    const row=h("div",{class:"row"});
+    row.append(h("button",{type:"button",class:"btn ghost sm",onclick:()=>{
+      const d=deduce(c,rec),steps=hintSteps(c,d),key=d.kind+"|"+(d.use?d.use.map(u=>u.label).join("+"):"")+"|"+(d.cells?JSON.stringify(d.cells.find(x=>x[3]===2)||d.cells[0]):"");
+      if(key!==rec.hk){rec.hk=key;rec.ht=1;}else if(rec.ht<steps.length)rec.ht++;else{toast("Use essa conclusão no caderno para seguir.");return;}
+      rec.htxt=steps.slice(0,rec.ht);rec.hcell=rec.ht===3&&d.cells?(d.cells.find(x=>x[3]===2)||d.cells[0]):null;rec.hints++;persist();draw();
+    }},icon("bulb"),!rec.htxt.length?"Pedir dica":rec.ht<3?"Mais detalhes":"Próxima dica"));
+    if(rec.hcell)row.append(h("button",{type:"button",class:"btn ghost sm",onclick:()=>{const[gi,a,b,v]=rec.hcell;mark(rec,gi,a,b,v);rec.hcell=null;rec.htxt=[];rec.hk=null;rec.ht=0;persist();draw();redrawWork();}},"Marcar no caderno"));
+    row.append(h("button",{type:"button",class:"btn ghost sm",onclick:()=>{const w=checkNotebook(c,rec);rec.checks++;persist();toast(w?`Seu caderno tem ${w} marca${w>1?"s":""} incorreta${w>1?"s":""}.`:"Nenhuma marca errada até aqui. Continue!");}},icon("search"),"Conferir caderno"));
+    box.append(row);
   };
-  draw();
-  return box;
+  draw();return box;
 }
-function gridsCard(c,st){
+function gridPanel(c,rec){
+  const GR=[{rows:"suspects",cols:"weapons"},{rows:"suspects",cols:"rooms"},{rows:"weapons",cols:"rooms"}];
+  const items=k=>k==="suspects"?c.suspects.map(n=>({n})):c[k];
+  const lab=it=>h("span",{class:"lab"},it.n,it.v!=null?h("b",{},it.v):null);
   const host=h("div");
-  const draw=(focus)=>{
+  const draw=focus=>{
     host.replaceChildren();
-    GRIDS.forEach((g,gi)=>{
-      const rows=items(c,g.rows), cols=items(c,g.cols);
+    GR.forEach((g,gi)=>{
+      const rows=items(g.rows),cols=items(g.cols);
       const thead=h("thead",{},h("tr",{},h("th",{class:"corner"}),cols.map(ci=>h("th",{scope:"col"},lab(ci)))));
       const tbody=h("tbody");
       rows.forEach((ri,r)=>{
         const tr=h("tr",{},h("th",{scope:"row"},lab(ri)));
         cols.forEach((ci,k)=>{
-          const v=st.g[gi][r][k];
-          const state=v===1?"descartado":v===2?"confirmado":"vazio";
-          tr.append(h("td",{},h("button",{type:"button",class:"cell s"+v,"data-pos":`${gi}-${r}-${k}`,
-            "aria-label":`${ri.n} e ${ci.n}: ${state}`,onclick:()=>cycle(gi,r,k)},v===1?"✗":v===2?"✓":"")));
+          const v=rec.g[gi][r][k],state=v===1?"descartado":v===2?"confirmado":"vazio";
+          tr.append(h("td",{},h("button",{type:"button",class:"cell s"+v+(isBad(rec.g[gi],r,k)?" bad":""),"data-pos":`${gi}-${r}-${k}`,"aria-label":`${ri.n} e ${ci.n}: ${state}`,onclick:()=>setv(gi,r,k,(rec.g[gi][r][k]+1)%3)},v===1?"✗":v===2?"✓":"")));
         });
         tbody.append(tr);
       });
-      host.append(h("div",{class:"gridblock"},h("h4",{},g.title),h("div",{class:"gridwrap"},h("table",{class:"grid"},thead,tbody))));
+      host.append(h("div",{class:"gridblock"},h("h4",{},GRN[gi]),h("div",{class:"gridwrap"},h("table",{class:"grid"},thead,tbody))));
     });
-    if(focus){ const el=host.querySelector(`[data-pos="${focus}"]`); if(el) el.focus(); }
+    if(focus){const el=host.querySelector(`[data-pos="${focus}"]`);if(el)el.focus();}
+    refreshSide();
   };
-  function cycle(gi,r,k){
-    const grid=st.g[gi], nv=(grid[r][k]+1)%3;
-    grid[r][k]=nv;
-    if(nv===2&&save.auto){
-      grid[r].forEach((_,j)=>{ if(j!==k&&grid[r][j]===0) grid[r][j]=1; });
-      grid.forEach((row,i)=>{ if(i!==r&&row[k]===0) row[k]=1; });
-    }
-    persist(); draw(`${gi}-${r}-${k}`);
-  }
+  function setv(gi,r,k,nv){mark(rec,gi,r,k,nv);draw(`${gi}-${r}-${k}`);}
+  function undo(){const hs=hist[rec.id];if(!hs||!hs.length){toast("Nada para desfazer");return;}rec.g=JSON.parse(hs.pop());persist();draw();}
+  host.addEventListener("mouseover",e=>hl(e.target.closest(".cell")));
+  host.addEventListener("focusin",e=>hl(e.target.closest(".cell")));
+  host.addEventListener("mouseleave",()=>hl(null));
+  host.addEventListener("keydown",e=>{
+    const b=e.target.closest&&e.target.closest(".cell");if(!b)return;
+    const [gi,r,k]=b.dataset.pos.split("-").map(Number),key=e.key.toLowerCase();
+    const mv={arrowup:[-1,0],arrowdown:[1,0],arrowleft:[0,-1],arrowright:[0,1]}[key];
+    if(mv){e.preventDefault();const t=host.querySelector(`[data-pos="${gi}-${r+mv[0]}-${k+mv[1]}"]`);if(t)t.focus();}
+    else if(key==="backspace"||key==="delete"){e.preventDefault();setv(gi,r,k,0);}
+    else if(key==="x")setv(gi,r,k,1);
+    else if(key==="v")setv(gi,r,k,2);
+    else if((e.ctrlKey||e.metaKey)&&key==="z"){e.preventDefault();undo();}
+  });
   draw();
+  const fillBox=h("input",{type:"checkbox",checked:save.fill!==false,onchange:e=>{save.fill=e.target.checked;persist();}});
   const auto=h("input",{type:"checkbox",checked:!!save.auto,onchange:e=>{save.auto=e.target.checked;persist();}});
-  return h("section",{class:"card"},h("h3",{},"Caderno de dedução"),
-    h("div",{class:"toolbar"},
-      h("label",{},auto,"Marcar ✗ automaticamente ao confirmar ✓"),
-      h("button",{type:"button",class:"btn ghost sm",onclick:()=>{
-        const n=c.size, mk=()=>Array.from({length:n},()=>Array(n).fill(0));
-        st.g=[mk(),mk(),mk()]; st.struck=[]; persist(); render();
-      }},"Limpar caderno")),
-    h("p",{class:"mute small"},"Toque numa casa: ✗ (descartado) → ✓ (confirmado) → vazio."),
-    host);
+  return h("div",{},
+    h("div",{class:"toolbar"},h("label",{},auto,"✗ automático ao confirmar ✓"),h("label",{},fillBox,"Completar casas óbvias"),
+      h("button",{type:"button",class:"btn ghost sm",onclick:undo},icon("undo"),"Desfazer"),
+      h("button",{type:"button",class:"btn ghost sm",onclick:()=>{rec.g=[mkG(c.size),mkG(c.size),mkG(c.size)];rec.struck=[];hist[rec.id]=[];persist();render();}},"Limpar caderno")),
+    h("p",{class:"mute small"},"Toque numa casa: ✗ (descartado) → ✓ (confirmado) → vazio. Teclado: setas, X, V, Backspace, Ctrl+Z."),host);
 }
-function answerCard(c,st){
-  const card=h("section",{class:"card"},h("h3",{},"Acusação"));
-  const msg=h("p",{class:"msg",role:"status","aria-live":"polite"});
-  const mk=(label,opts,key)=>{
-    const s=h("select",{"aria-label":label},h("option",{value:""},"—"),opts.map((o,i)=>h("option",{value:String(i)},o)));
-    s.value=st.answer[key];
-    s.addEventListener("change",()=>{st.answer[key]=s.value;persist();});
-    return h("label",{},label,s);
+// quadro de investigação (cortiça + barbante)
+function boardPanel(c,rec){
+  const wrap=h("div",{class:"boardwrap"});let sel=null;
+  const n=c.size,W=n*175+40,HH=560,xs=i=>20+175*(i+.5);
+  const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");
+  const fs=(t,max)=>Math.min(17,Math.floor(max/(t.length*.56)));
+  const draw=()=>{
+    const f=fichas(c,rec);
+    let s=`<svg viewBox="0 0 ${W} ${HH}" class="cork" role="img" aria-label="Quadro de investigação"><defs><filter id="sh" x="-10%" y="-10%" width="120%" height="130%"><feDropShadow dx="2" dy="4" stdDeviation="3" flood-opacity=".45"/></filter></defs>`;
+    const line=(x1,y1,x2,y2,dash)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#c0392b" stroke-width="3.5" stroke-linecap="round"${dash?' stroke-dasharray="10 8"':""}/>`;
+    for(let i=0;i<n;i++){
+      if(f.sw[i]>=0)s+=line(xs(i),212,xs(f.sw[i]),98,f.inf.w[i]);
+      if(f.sr[i]>=0)s+=line(xs(i),356,xs(f.sr[i]),462,f.inf.r[i]);
+    }
+    const on=(t,i)=>sel&&sel.t===t&&sel.i===i;
+    const pin=(x,y)=>`<circle cx="${x}" cy="${y}" r="7" fill="#c0392b" stroke="#6b1a12" stroke-width="2"/>`;
+    c.weapons.forEach((w,i)=>{const x=xs(i)-78,lab=f.wr[i]>=0?`→ ${c.rooms[f.wr[i]].n}`:`peso ${w.v}`;
+      s+=`<g class="bi" data-k="w${i}" filter="url(#sh)"><rect x="${x}" y="36" width="156" height="62" rx="4" fill="#f3e6c4" stroke="${on("w",i)?"#f0b84a":"#b99a5c"}" stroke-width="${on("w",i)?5:1.5}"/><text x="${xs(i)}" y="64" text-anchor="middle" font-size="${fs(w.n,140)}" font-weight="700" fill="#5a2a1e">${esc(w.n)}</text><text x="${xs(i)}" y="86" text-anchor="middle" font-size="14" fill="#7a5a3a">${esc(lab)}</text>${pin(xs(i),40)}</g>`;});
+    c.rooms.forEach((r,i)=>{const x=xs(i)-78;
+      s+=`<g class="bi" data-k="r${i}" filter="url(#sh)"><rect x="${x}" y="462" width="156" height="62" rx="4" fill="#dfe9f3" stroke="${on("r",i)?"#f0b84a":"#8aa4c0"}" stroke-width="${on("r",i)?5:1.5}"/><text x="${xs(i)}" y="490" text-anchor="middle" font-size="${fs(r.n,140)}" font-weight="700" fill="#1e3a5a">${esc(r.n)}</text><text x="${xs(i)}" y="512" text-anchor="middle" font-size="14" fill="#4a6a8a">cômodo ${r.v}</text>${pin(xs(i),466)}</g>`;});
+    c.suspects.forEach((nm,i)=>{const x=xs(i)-62,rot=((hashStr(nm)%7)-3)*.8;
+      s+=`<g class="bi" data-k="s${i}" filter="url(#sh)" transform="rotate(${rot} ${xs(i)} 284)"><rect x="${x}" y="206" width="124" height="150" fill="#fbfaf5" stroke="${on("s",i)?"#f0b84a":"#d8d2c0"}" stroke-width="${on("s",i)?5:1.5}"/>${portraitSVG(nm,`x="${x+10}" y="216" width="104" height="104"`)}<text x="${xs(i)}" y="343" text-anchor="middle" font-size="17" font-weight="700" fill="#222">${esc(nm)}</text>${pin(xs(i),212)}</g>`;});
+    s+="</svg>";
+    wrap.innerHTML=s;
   };
-  card.append(
-    h("div",{class:"answer"},
-      mk("Quem",c.suspects,0),
-      mk("Com qual arma",c.weapons.map(w=>`${w.n} (${w.v})`),1),
-      mk("Em qual cômodo",c.rooms.map(r=>`${r.n} (${r.v})`),2)),
-    h("button",{type:"button",class:"btn",onclick:()=>{
-      if(st.answer.some(a=>a==="")){ msg.textContent="Escolha suspeito, arma e cômodo antes de acusar."; return; }
-      const [s,w,r]=st.answer.map(Number), k=c.sol.culprit;
-      const hits=[s===k,w===c.sol.pw[k],r===c.sol.pr[k]].filter(Boolean).length;
-      if(hits===3){
-        st.solved=true; st.stars=Math.max(1,3-(st.errors>0?1:0)-(st.hints>0?1:0));
-        persist(); render(); window.scrollTo(0,0);
-      }else{
-        st.errors++; persist();
-        msg.textContent=`Acusação incorreta: ${hits} de 3 elementos corretos. Revise as pistas e tente de novo.`;
-        card.classList.remove("shake"); void card.offsetWidth; card.classList.add("shake");
-      }
-    }},"Acusar"),
-    msg);
-  return card;
+  wrap.addEventListener("click",e=>{
+    const el=e.target.closest&&e.target.closest("[data-k]");if(!el){sel=null;draw();return;}
+    const it={t:el.dataset.k[0],i:+el.dataset.k.slice(1)};
+    if(!sel||sel.t===it.t){sel=sel&&sel.t===it.t&&sel.i===it.i?null:it;draw();return;}
+    const pair=[sel,it].sort((a,b)=>"swr".indexOf(a.t)-"swr".indexOf(b.t)),key=pair[0].t+pair[1].t;
+    const gi=key==="sw"?0:key==="sr"?1:2,a=pair[0].i,b=pair[1].i;
+    mark(rec,gi,a,b,rec.g[gi][a][b]===2?0:2);sel=null;draw();refreshSide();
+  });
+  draw();
+  return h("div",{},h("p",{class:"mute small"},"Toque num suspeito e depois numa arma ou num cômodo para ligar com barbante (vira ✓ no caderno). Arma e cômodo também se ligam entre si. Toque de novo no par para desfazer. Linha tracejada = deduzida pelo cruzamento."),wrap);
 }
-function revealCard(c,st){
-  const k=c.sol.culprit;
-  const rows=c.suspects.map((n,i)=>h("tr",{class:i===k?"k":""},
-    h("th",{scope:"row"},n),h("td",{},`${c.weapons[c.sol.pw[i]].n} (${c.weapons[c.sol.pw[i]].v})`),h("td",{},`${c.rooms[c.sol.pr[i]].n} (${c.rooms[c.sol.pr[i]].v})`)));
+function notesPanel(c,rec){
+  const ta=h("textarea",{class:"nt","aria-label":"Anotações dos investigadores",placeholder:"Anote aqui o que já sabe, hipóteses e o que falta testar…"});
+  ta.value=rec.notes;let tm=null;
+  ta.addEventListener("input",()=>{rec.notes=ta.value;clearTimeout(tm);tm=setTimeout(persist,250);});
+  ta.addEventListener("blur",()=>{rec.notes=ta.value;persist();});
+  const ins=txt=>{const s=ta.selectionStart==null?ta.value.length:ta.selectionStart,e=ta.selectionEnd==null?s:ta.selectionEnd;ta.value=ta.value.slice(0,s)+txt+ta.value.slice(e);const p=s+txt.length;ta.focus();try{ta.setSelectionRange(p,p);}catch(_){}rec.notes=ta.value;persist();};
+  const chips=(label,arr,cls)=>h("div",{class:"qrow"},h("span",{class:"qlab"},label),arr.map(n=>h("button",{type:"button",class:"qchip "+cls,onclick:()=>ins(n+" ")},n)));
+  return h("div",{},
+    h("p",{class:"mute small"},"Espaço livre do detetive. Toque num nome ou símbolo para inserir no texto. As anotações ficam salvas neste navegador."),
+    chips("Suspeitos",c.suspects,"s"),chips("Armas",c.weapons.map(w=>w.n),"w"),chips("Cômodos",c.rooms.map(r=>r.n),"r"),chips("Lógica",["¬","∧","∨","→","↔","⊕","∀","∃"],"l"),ta,
+    h("div",{class:"toolbar"},
+      h("button",{type:"button",class:"btn ghost sm",onclick:()=>ins((ta.value&&!ta.value.endsWith("\n")?"\n\n":"")+"FATOS CONFIRMADOS\n- \n\nHIPÓTESES\n- \n\nPRÓXIMA PISTA A TESTAR\n- \n")},"Inserir modelo"),
+      h("button",{type:"button",class:"btn ghost sm",onclick:()=>{if(ta.value.trim()&&!confirm("Apagar todas as anotações deste caso?"))return;ta.value="";rec.notes="";persist();}},"Limpar anotações")));
+}
+function workCard(c,rec){
+  const card=h("section",{class:"card work-card"});
+  const draw=()=>{
+    const tabs=h("div",{class:"wtabs",role:"tablist","aria-label":"Ferramentas do caso"},
+      [["grid","Caderno"],["board","Quadro"],["notes","Anotações"]].map(([k,label])=>h("button",{type:"button",role:"tab",class:"wtab","aria-selected":String(rec.tab===k),onclick:()=>{rec.tab=k;persist();draw();}},label)));
+    card.replaceChildren(tabs,rec.tab==="notes"?notesPanel(c,rec):rec.tab==="board"?boardPanel(c,rec):gridPanel(c,rec));
+  };
+  redrawWork=draw;draw();return card;
+}
+let refreshSide=()=>{};
+function fichasCard(c,rec){
+  const card=h("section",{class:"card fichas-card"});
+  const draw=()=>{
+    const f=fichas(c,rec),known=f.sw.filter(x=>x>=0).length+f.sr.filter(x=>x>=0).length,tot=c.size*2;
+    card.replaceChildren(h("h3",{},"Fichas dos suspeitos"),
+      h("div",{class:"pbar","aria-hidden":"true"},h("i",{style:`width:${Math.round(known/tot*100)}%`})),
+      h("p",{class:"mute small"},`${known}/${tot} deduções no caderno. Itens "inferido" vêm do cruzamento dos quadros.`),
+      h("div",{class:"fgrid"},c.suspects.map((n,i)=>h("div",{class:"ficha"},
+        h("div",{class:"fname"},pic(n,"sm"),n),
+        h("div",{class:"frow"},h("span",{class:"fk"},"Arma"),f.sw[i]>=0?h("span",{class:"fv w"},c.weapons[f.sw[i]].n,f.inf.w[i]?h("em",{},"inferido"):null):h("span",{class:"fv none"},`? (${f.left.w[i]} possíveis)`)),
+        h("div",{class:"frow"},h("span",{class:"fk"},"Cômodo"),f.sr[i]>=0?h("span",{class:"fv r"},c.rooms[f.sr[i]].n,f.inf.r[i]?h("em",{},"inferido"):null):h("span",{class:"fv none"},`? (${f.left.r[i]} possíveis)`))))));
+  };
+  draw();refreshSide=draw;return card;
+}
+function answerCard(ctx,c,rec){
+  const card=h("section",{class:"card accuse"});
+  const msg=h("p",{class:"msg",role:"status","aria-live":"polite"});
+  const draw=()=>{
+    const group=(label,opts,key)=>h("div",{class:"ans-group",role:"radiogroup","aria-label":label},h("h4",{},label),
+      h("div",{class:"ans-opts"},opts.map((o,i)=>{const on=rec.answer[key]===String(i);return h("button",{type:"button",role:"radio","aria-checked":String(on),class:"opt "+o.cls+(on?" on":""),onclick:()=>{rec.answer[key]=on?"":String(i);persist();draw();}},o.pic?pic(o.label,"xs"):null,o.label,o.v!=null?h("b",{},o.v):null);})));
+    card.replaceChildren(h("h3",{},"Acusação"),
+      group("Quem",c.suspects.map(n=>({label:n,cls:"s",pic:true})),0),
+      group("Com qual arma",c.weapons.map(w=>({label:w.n,v:w.v,cls:"w"})),1),
+      group("Em qual cômodo",c.rooms.map(r=>({label:r.n,v:r.v,cls:"r"})),2),
+      h("button",{type:"button",class:"btn",onclick:accuse},"Acusar"),msg);
+  };
+  function accuse(){
+    if(rec.answer.some(a=>a==="")){msg.textContent="Escolha suspeito, arma e cômodo antes de acusar.";return;}
+    const [s,w,r]=rec.answer.map(Number),k=c.sol.culprit;
+    const hits=[s===k,w===c.sol.pw[k],r===c.sol.pr[k]].filter(Boolean).length;
+    if(hits===3){
+      rec.solved=true;rec.stars=Math.max(1,3-(rec.errors>0?1:0)-((rec.hints+rec.checks)>0?1:0));
+      rec.lv=c.lv|0;rec.liar=!!c.liar;rec.formalUsed=!!save.formal;
+      if(ctx.onSolved)ctx.onSolved();
+      const fresh=checkAch();persist();render();scrollTop();burst();
+      if(fresh.length)setTimeout(()=>toast(`Conquista: ${fresh.map(a=>a.name).join(", ")}`),ctx.toastDelay||300);
+    }else{
+      rec.errors++;persist();
+      msg.textContent=`Acusação incorreta: ${hits} de 3 elementos corretos. Revise as pistas e tente de novo. Erros: ${rec.errors}.`;toast(`Acusação incorreta · ${hits}/3 corretos`);
+      card.classList.remove("shake");void card.offsetWidth;card.classList.add("shake");
+    }
+  }
+  draw();return card;
+}
+function revealCard(ctx,c,rec){
+  const k=c.sol.culprit,X=c.suspects[k];
+  const rows=c.suspects.map((n,i)=>h("tr",{class:i===k?"k":""},h("th",{scope:"row"},n),h("td",{},`${c.weapons[c.sol.pw[i]].n} (${c.weapons[c.sol.pw[i]].v})`),h("td",{},`${c.rooms[c.sol.pr[i]].n} (${c.rooms[c.sol.pr[i]].v})`)));
   const card=h("section",{class:"card reveal"},
-    h("p",{class:"kicker"},"Caso encerrado"),
-    h("h3",{},`${c.suspects[k]} é o culpado!`),
-    h("p",{},`${c.suspects[k]} usou ${c.weapons[c.sol.pw[k]].n} em ${c.rooms[c.sol.pr[k]].n}.`),
+    h("div",{class:"rhead"},pic(X,"lg"),h("div",{},h("p",{class:"kicker"},"Caso encerrado"),h("h3",{},`${X} é ${culpritWord(X)}!`),
+      h("p",{},`${X} usou ${art(c.weapons[c.sol.pw[k]])} ${prep(c.rooms[c.sol.pr[k]])}.`))),
+    c.stmts?h("p",{class:"liarline"},`${X} mentiu ao dizer: “${c.stmts[k].t}”`):null,
     h("p",{class:"ending"},c.ending),
-    h("div",{class:"stars","aria-label":`${st.stars} de 3 estrelas`},starStr(st.stars)),
+    ctx.extra||null,
+    h("p",{class:"mute small"},`Tempo ${fmt(rec.t)} · ${rec.errors} erro(s) · ${rec.hints+rec.checks} ajuda(s)`),
+    h("div",{class:"stars","aria-label":`${rec.stars} de 3 estrelas`},starStr(rec.stars)),
     h("h4",{},"Quem fez o quê"),
     h("table",{class:"sol"},h("thead",{},h("tr",{},h("th",{},"Suspeito"),h("th",{},"Arma"),h("th",{},"Cômodo"))),h("tbody",{},rows)),
-    h("h4",{},"A dedução completa"),
-    h("ol",{},c.explain.map(t=>h("li",{},t))));
-  if(cur<CASES.length-1) card.append(h("button",{type:"button",class:"btn",onclick:()=>{cur++;save.current=cur;persist();render();window.scrollTo(0,0);}},"Próximo caso →"));
-  else card.append(h("p",{class:"mute"},"Você resolveu todos os casos. Dedutivo é seu, detetive."));
+    h("h4",{},"A dedução completa"),h("ol",{},c.explain.map(t=>h("li",{},t))));
+  card.append(h("div",{class:"row"},shareRow(ctx,c,rec),ctx.actions||[]));
   return card;
 }
-// Banco de histórias alternativas por nível. Cada variante reutiliza o molde lógico
-// do nível, mas recebe cenário, elenco, objetos e narrativa próprios.
-const STORY_VARIANTS = [
-  [
-    {title:"O Relógio da Estação",intro:"Durante a inauguração da Estação Meridian, o relojoeiro-chefe foi encontrado morto na sala de controle. Três funcionários estiveram no local, cada um com uma ferramenta e em um ambiente distinto. Descubra quem sabotou a inauguração.",suspects:["Lia","Caio","Bento"],weapons:["Chave inglesa","Estilete","Peso de relógio"],rooms:["Bilheteria","Oficina","Plataforma"]},
-    {title:"O Incidente no Aquário",intro:"Na noite de uma visita exclusiva, o curador do Aquário Azul foi encontrado morto. Três membros da equipe estavam no prédio. Cruze as ferramentas e os setores para descobrir quem cometeu o crime.",suspects:["Nara","Davi","Íris"],weapons:["Gancho","Bisturi","Frasco tóxico"],rooms:["Coralário","Laboratório","Sala das bombas"]},
-    {title:"O Enigma do Observatório",intro:"Uma falha inexplicável interrompeu a sessão astronômica, e o diretor foi encontrado sem vida. Três técnicos tinham acesso a equipamentos e setores diferentes. Use as pistas matemáticas para identificar o culpado.",suspects:["Milo","Tânia","Rosa"],weapons:["Cabo","Lâmina","Contrapeso"],rooms:["Cúpula","Arquivo","Terraço"]}
-  ],
-  [
-    {title:"O Roubo no Museu",intro:"Durante uma recepção no Museu das Antiguidades, a peça mais valiosa desapareceu e o segurança foi encontrado morto. Quatro funcionários estiveram em setores distintos. As pistas combinam soma, produto e comparação: descubra quem planejou tudo.",suspects:["Helena","Murilo","Sofia","Tomás"],weapons:["Lanterna pesada","Punhal","Sedativo","Candelabro"],rooms:["Galeria","Reserva","Restauro","Pátio"]},
-    {title:"Mistério no Hotel Neblina",intro:"Na madrugada de um congresso, o gerente do Hotel Neblina foi encontrado morto. Quatro hóspedes e funcionários deixaram rastros numéricos entre quartos e objetos. Cruze as informações para resolver o caso.",suspects:["Cecília","Raul","Bia","Vicente"],weapons:["Corda","Faca de mesa","Ampola","Abajur"],rooms:["Recepção","Suíte","Lavanderia","Cozinha"]},
-    {title:"A Noite do Teatro",intro:"Após o último ato, o diretor do Teatro Íris foi encontrado morto nos bastidores. Quatro integrantes da companhia tinham acesso a objetos e dependências diferentes. As pistas exigem dedução em cadeia.",suspects:["Luna","Artur","Mônica","Estevão"],weapons:["Cabo de cena","Adaga cenográfica","Pó químico","Castiçal"],rooms:["Coxia","Camarim","Oficina","Palco"]}
-  ],
-  [
-    {title:"O Segredo do Farol",intro:"Uma tempestade isolou o Farol de Santa Bruma. Pela manhã, o engenheiro responsável foi encontrado morto. Quatro guardiões, objetos numerados e cômodos incomuns compõem um caso que exige cruzar pistas em dupla.",suspects:["Alda","Noel","Ciro","Vera"],weapons:["Bússola","Alicate","Sinalizador","Chave"],rooms:["Lanterna","Depósito","Sala de mapas","Dormitório"]},
-    {title:"O Cofre da Casa de Leilões",intro:"Na véspera de um leilão raro, o avaliador foi encontrado morto e o cofre violado. Quatro especialistas circularam por salas e ferramentas. A solução depende de combinar restrições antes de calcular quem tinha a maior soma.",suspects:["Eva","Gael","Lídia","Paco"],weapons:["Régua de metal","Compasso","Lupa pesada","Calculadora"],rooms:["Salão","Escritório","Arquivo","Adega"]},
-    {title:"O Código da Mina",intro:"Um geólogo foi encontrado morto numa mina desativada. Quatro exploradores usaram equipamentos distintos em galerias numeradas. As pistas se cruzam: não conclua nada com uma única informação.",suspects:["Ivo","Maia","Téo","Yara"],weapons:["Picareta","Lanterna","Cabo","Medidor"],rooms:["Galeria Norte","Poço","Câmara","Trilho"]}
-  ],
-  [
-    {title:"O Último Baile de Inverno",intro:"Durante um baile numa mansão isolada, a anfitriã foi encontrada morta. Cinco convidados, cinco objetos e cinco aposentos escondem uma sequência de condições e consequências. Só uma dedução cuidadosa revelará o culpado.",suspects:["Amália","Breno","Catarina","Duarte","Estela"],weapons:["Leque metálico","Punhal","Frasco","Castiçal","Bastão"],rooms:["Salão","Sótão","Biblioteca","Jardim","Adega"]},
-    {title:"A Expedição Perdida",intro:"Após o retorno incompleto de uma expedição, o líder foi encontrado morto no acampamento. Cinco integrantes estiveram em locais distintos com equipamentos diferentes. As pistas condicionais e as relações numéricas formam um desafio de mestre.",suspects:["Zélia","Otto","Ravi","Nina","Léo"],weapons:["Corda","Machadinha","Soro","Marreta","Bússola"],rooms:["Barraca","Ravina","Caverna","Ponte","Mirante"]},
-    {title:"O Manuscrito de Cinzas",intro:"Num arquivo histórico, o guardião de um manuscrito desaparecido foi encontrado morto. Cinco pesquisadores, cinco instrumentos e cinco salas: algumas pistas só valem se outra condição for verdadeira. Descubra quem ocultou a verdade.",suspects:["Dora","Ítalo","Salma","Ulisses","Vítor"],weapons:["Estilete","Peso de papel","Frasco","Castiçal","Martelo"],rooms:["Arquivo","Laboratório","Galeria","Depósito","Gabinete"]}
-  ]
-];
-const variantPick={};
-const variants={};
-function makeStoryVariant(levelIndex){
-  const choices=STORY_VARIANTS[levelIndex]||[];
-  if(!choices.length) return CASES[levelIndex];
-  let pick=Math.floor(Math.random()*choices.length);
-  if(choices.length>1&&pick===variantPick[levelIndex]) pick=(pick+1)%choices.length;
-  variantPick[levelIndex]=pick;
-  const base=CASES[levelIndex], story=choices[pick];
-  // preserve the exact puzzle rules, values, hint/explanation integrity and difficulty;
-  // change narrative, character/object/place labels only.
-  const c={...base,title:story.title,intro:story.intro,
-    suspects:story.suspects.slice(),
-    weapons:base.weapons.map((x,i)=>({...x,n:story.weapons[i]})),
-    rooms:base.rooms.map((x,i)=>({...x,n:story.rooms[i]}))};
-  // Atualiza os nomes citados no texto das pistas/dicas/solução para combinar
-  // com o novo elenco e cenário, sem alterar as funções lógicas das pistas.
-  const replacements=[];
-  base.suspects.forEach((name,i)=>replacements.push([name,c.suspects[i]]));
-  base.weapons.forEach((item,i)=>replacements.push([item.n,c.weapons[i].n]));
-  base.rooms.forEach((item,i)=>replacements.push([item.n,c.rooms[i].n]));
-  const rewrite=t=>replacements.reduce((out,[from,to])=>out.split(from).join(to),t);
-  c.clues=base.clues.map(cl=>({...cl,t:rewrite(cl.t)}));
-  c.hints=base.hints.map(rewrite);
-  c.explain=base.explain.map(rewrite);
-  c.ending=rewrite(base.ending);
-  c.sol=base.sol; c.size=c.suspects.length;
-  return c;
+function caseBoard(ctx,c,rec){
+  refreshSide=()=>{};redrawWork=()=>{};VIEW=rec;
+  const left=h("div",{class:"col-l"},castCard(c),c.stmts?stmtCard(c,rec):null,cluesCard(c,rec),helpCard(c,rec));
+  const right=h("div",{class:"col-r"},workCard(c,rec),fichasCard(c,rec),rec.solved?null:answerCard(ctx,c,rec));
+  return[rec.solved?revealCard(ctx,c,rec):null,h("div",{class:"board"},left,right)];
 }
-function refreshCase(){
-  variants[cur]=makeStoryVariant(cur);
-  const n=variants[cur].size,mk=()=>Array.from({length:n},()=>Array(n).fill(0));
-  const st=caseState(cur); st.g=[mk(),mk(),mk()];st.struck=[];st.errors=0;st.hints=0;st.solved=false;st.stars=0;st.answer=["","",""];
-  persist();render();
+function timerEl(rec){return h("span",{class:"timer",title:"Tempo neste caso"},icon("clock"),h("span",{id:"timer"},fmt(rec.t)));}
+let VIEW=null;
+
+// ---------- truth tables / lição ----------
+const TF=v=>v?"V":"F";
+const TT={
+  neg:{h:["P","¬P"],rows:[[1],[0]].map(([p])=>[p,!p])},
+  and:{h:["P","Q","P ∧ Q"],f:(p,q)=>[p&&q]},
+  or:{h:["P","Q","P ∨ Q"],f:(p,q)=>[p||q]},
+  imp:{h:["P","Q","P → Q","¬Q → ¬P"],f:(p,q)=>[!p||q,q||!p]},
+  iff:{h:["P","Q","P ↔ Q"],f:(p,q)=>[p===q]},
+  xor:{h:["P","Q","P ⊕ Q","¬(P ↔ Q)"],f:(p,q)=>[p!==q,p!==q]},
+  dm:{h:["P","Q","¬(P ∧ Q)","¬P ∨ ¬Q","¬(P ∨ Q)","¬P ∧ ¬Q"],f:(p,q)=>[!(p&&q),!p||!q,!(p||q),!p&&!q]}
+};
+function truthTable(k){
+  const T=TT[k];if(!T)return null;
+  const rows=T.rows||[[1,1],[1,0],[0,1],[0,0]].map(([p,q])=>[!!p,!!q,...T.f(!!p,!!q)]);
+  return h("table",{class:"tt"},h("thead",{},h("tr",{},T.h.map(x=>h("th",{},x)))),h("tbody",{},rows.map(r=>h("tr",{},r.map((v,i)=>h("td",{class:(v?"v":"f")+(i>=(k==="neg"?1:2)?" out":"")},TF(v)))))));
 }
-// Seta de refresh cheia (mesmo desenho da referência), na cor do texto do botão (âmbar).
-// Criada via innerHTML para o navegador reconhecer como SVG de verdade.
-function icoRefresh(){
-  const s=h("span",{class:"ico","aria-hidden":"true"});
-  s.innerHTML='<svg viewBox="0 0 512 512" focusable="false"><path d="M256 112A176 176 0 1 0 432 288" fill="none" stroke="currentColor" stroke-width="96"/><path d="M256 6L378 112L256 218Z" fill="currentColor" stroke="currentColor" stroke-width="14" stroke-linejoin="round"/></svg>';
-  return s;
+function lessonCard(k,c,solved){
+  const ch=CHAPTERS[k],ex=c.clues.find(cl=>cl.focus)||c.clues.find(cl=>cl.op);
+  const d=h("details",{class:"card lesson"},h("summary",{},h("span",{class:"sym"},ch.sym),h("span",{},h("small",{},`Capítulo ${k+1} · conceito`),ch.name)),
+    h("p",{},ch.lesson),truthTable(ch.table),
+    ex?h("div",{class:"example"},h("span",{class:"tag"},"Neste caso"),h("p",{},ex.t),h("code",{class:"fx"},ex.fx)):null,
+    ch.table==="q"?h("ul",{class:"qlist"},h("li",{},h("code",{},"∀x P(x)")," · para todo x, P(x)"),h("li",{},h("code",{},"∃x P(x)")," · existe pelo menos um x com P(x)"),h("li",{},h("code",{},"∃!x P(x)")," · existe exatamente um"),h("li",{},h("code",{},"¬∀x P(x) ≡ ∃x ¬P(x)")," · negar troca o quantificador")):null);
+  if(!solved)d.open=true;
+  return d;
 }
-function renderCase(){
-  const c=variants[cur]||CASES[cur], st=caseState(cur);
-  const root=h("div",{},
-    h("section",{class:"card"},h("div",{class:"case-tools"},h("p",{class:"kicker"},`Caso ${cur+1} · ${c.level} · ${c.size}×${c.size}`),h("button",{type:"button",class:"btn ghost sm refresh",title:"Gerar outra versão deste caso",onclick:refreshCase},icoRefresh(),"Novo caso")),h("h2",{},c.title),h("p",{},c.intro),h("details",{class:"notes"},h("summary",{},"Notas da investigação"),h("p",{class:"mute small"},"Registre hipóteses, descartes e dúvidas deste caso. Suas anotações ficam salvas neste navegador."),h("textarea",{"aria-label":"Anotações dos investigadores",placeholder:"Anote aqui suas deduções…",oninput:e=>{st.notes=e.target.value;persist();}},st.notes||""))));
-  if(st.solved) root.append(revealCard(c,st));
-  root.append(h("div",{class:"board"},
-    h("div",{},castCard(c),cluesCard(c,st),hintCard(c,st)),
-    h("div",{},gridsCard(c,st),st.solved?null:answerCard(c,st))));
-  return root;
+
+// ---------- telas ----------
+function howTo(){
+  const d=h("details",{class:"how"},h("summary",{},"Como jogar"),
+    h("ul",{},
+      h("li",{},"Cada suspeito usou ",h("b",{},"uma arma")," em ",h("b",{},"um cômodo"),". Nenhuma arma nem cômodo se repete."),
+      h("li",{},"Armas têm um ",h("b",{},"peso")," e cômodos têm um ",h("b",{},"número"),". As pistas usam aritmética e lógica: negação, \"e\", \"ou\", \"se… então\", \"se e somente se\", quantificadores."),
+      h("li",{},"No ",h("b",{},"Caderno"),", toque numa casa para marcar ✗ (descartado) e depois ✓ (confirmado). No ",h("b",{},"Quadro"),", ligue suspeitos a armas e cômodos com barbante."),
+      h("li",{},"Resolva as pistas e use a ",h("b",{},"pista final")," para apontar o culpado. Em casos com ",h("b",{},"depoimentos"),", o culpado mente e os outros dizem a verdade."),
+      h("li",{},"Ligue a ",h("b",{},"Notação formal")," para ver cada pista em linguagem da lógica matemática."),
+      h("li",{},"3 estrelas para quem resolve sem erros e sem ajuda (dicas ou conferência do caderno).")));
+  if(!save.seen)d.open=true;
+  return d;
+}
+function campMap(){
+  const cs=CHAPTERS.slice(0,9).filter((_,k)=>campSolved(k)).length,all9=cs===9;
+  const intro=h("section",{class:"card camp-intro"},h("p",{class:"kicker"},"Campanha"),h("h2",{},"A Sociedade do Axioma"),
+    h("p",{},"Uma sociedade secreta está roubando manuscritos de matemática pela cidade. Cada culpado carrega um cartão com um algarismo. Junte os nove cartões, abra o cofre e encontre o Arquiteto. Cada capítulo ensina um conceito de lógica matemática."),
+    h("div",{class:"pbar"},h("i",{style:`width:${Math.round(cs/9*100)}%`})),h("p",{class:"mute small"},`${cs}/9 capítulos concluídos`));
+  const grid=h("div",{class:"chapters"},CHAPTERS.map((ch,k)=>{
+    const open=chapterOpen(k),r=save.camp.recs[k],done=campSolved(k);
+    return h("button",{type:"button",class:"chap"+(done?" done":"")+(open?"":" locked")+(ch.final?" final":""),disabled:!open,onclick:()=>{save.camp.open=k;persist();render();scrollTop();}},
+      h("span",{class:"chn"},ch.final?"Final":`Capítulo ${k+1}`),h("span",{class:"chsym"},ch.sym),h("span",{class:"chname"},ch.name),h("span",{class:"chtitle"},ch.title),
+      h("span",{class:"chst"},!open?[icon("lock"),ch.final?"Junte os 9 cartões":"Conclua o anterior"]:done?[h("span",{class:"st"},starStr(r.stars)),ch.final?null:h("span",{class:"frag"},`Cartão ${fragment(k)}`)]:r&&(r.t||r.errors)?"Em andamento":"Disponível"));
+  }));
+  const dossier=h("section",{class:"card dossier"},h("h3",{},"Dossiê: cartões encontrados"),
+    h("div",{class:"frags"},CHAPTERS.slice(0,9).map((_,k)=>h("span",{class:"fragc"+(campSolved(k)?" on":"")},campSolved(k)?String(fragment(k)):"?"))));
+  if(all9&&!save.camp.unlocked){
+    const msg=h("p",{class:"codemsg small"});
+    dossier.append(h("p",{},"Os nove cartões formam o código do cofre. Digite-os na ordem dos capítulos."),
+      h("form",{class:"codeform",onsubmit:e=>{e.preventDefault();const v=$("input",e.target).value.replace(/\D/g,"");if(v===campCode()){save.camp.unlocked=true;persist();toast("O cofre abriu. O caso final está disponível.");render();}else msg.textContent="O cofre não abriu. Confira a ordem dos cartões.";}},
+        h("input",{class:"codein",inputmode:"numeric",maxlength:"9",placeholder:"000000000","aria-label":"Código do cofre",autocomplete:"off"}),h("button",{type:"submit",class:"btn sm"},"Abrir cofre")),msg);
+  }else if(save.camp.unlocked)dossier.append(h("p",{class:"mute small"},"Cofre aberto. O caso final está liberado."));
+  return[intro,grid,dossier];
+}
+function campCase(k){
+  const ch=CHAPTERS[k],rec=campRec(k),c=getCase(rec);
+  const head=h("section",{class:"card casehead"},
+    h("div",{class:"case-tools"},h("div",{class:"casenav"},h("button",{type:"button",class:"iconbtn","aria-label":"Voltar ao mapa da campanha",onclick:()=>{save.camp.open=null;persist();render();scrollTop();}},icon("left")),
+      h("p",{class:"kicker"},`${ch.final?"Caso final":"Capítulo "+(k+1)} · ${ch.name} · ${c.level} · ${c.size}×${c.size}`)),h("div",{class:"casetools-r"},timerEl(rec))),
+    h("h2",{},c.title),h("p",{class:"intro"},c.intro));
+  const nextK=k+1<CHAPTERS.length&&chapterOpen(k+1)?k+1:null;
+  const ctx={label:ch.final?"Campanha · caso final":`Campanha · capítulo ${k+1}: ${ch.name}`,
+    onSolved:()=>{if(!ch.final)setTimeout(()=>toast(`Cartão encontrado: ${fragment(k)}`),900);},toastDelay:2200,
+    extra:ch.final?h("p",{class:"epilogue"},"Com o Arquiteto desmascarado, a Sociedade do Axioma se desfaz. Os manuscritos voltam ao Arquivo, e o seu nome entra para os livros (de lógica)."):(rec.solved?h("p",{class:"fragline"},`Cartão da Sociedade encontrado com ${c.suspects[c.sol.culprit]}: algarismo ${fragment(k)}.`):null),
+    actions:[h("button",{type:"button",class:"btn",onclick:()=>{save.camp.open=nextK;persist();render();scrollTop();}},nextK!=null?"Próximo capítulo →":"Voltar ao mapa")]};
+  return[head,lessonCard(k,c,rec.solved),...caseBoard(ctx,c,rec)];
+}
+function dailyView(){
+  const dk=todayKey(),rec=dailyRec(dk),c=getCase(rec),cfg=dailyCfg(dk),st=streak();
+  const tm=new Date();tm.setHours(24,0,0,0);const left=Math.max(0,tm-Date.now()),hh=Math.floor(left/36e5),mm=Math.floor(left%36e5/6e4);
+  const head=h("section",{class:"card casehead"},
+    h("div",{class:"case-tools"},h("p",{class:"kicker"},`Caso do dia · ${dkBR(dk)} · ${c.level}${cfg.liar?" com depoimentos":""} · ${c.size}×${c.size}`),h("div",{class:"casetools-r"},timerEl(rec))),
+    h("h2",{},c.title),h("p",{class:"intro"},c.intro),
+    h("p",{class:"mute small"},`Todo mundo recebe o mesmo caso hoje. Sequência atual: ${st} dia${st===1?"":"s"}. Novo caso em ${hh}h${String(mm).padStart(2,"0")}.`));
+  const ctx={label:`Caso do dia ${dkBR(dk)} · ${c.level}`,onSolved:()=>{if(!save.daily.done.includes(dk)){save.daily.done.push(dk);save.daily.done=save.daily.done.slice(-400);}},
+    actions:[h("button",{type:"button",class:"btn",onclick:()=>{save.mode="free";persist();render();scrollTop();}},"Ir para o jogo livre →")]};
+  return[head,...caseBoard(ctx,c,rec)];
+}
+function levelNav(){
+  return h("nav",{class:"levels","aria-label":"Níveis"},LV.map((L,i)=>{
+    const sv=save.levels[i].list.filter(r=>r.solved),st=sv.reduce((a,r)=>a+r.stars,0);
+    return h("button",{type:"button",class:"lvl"+(i===save.level?" on":""),"aria-current":i===save.level?"true":"false",onclick:()=>{save.level=i;persist();render();}},
+      h("span",{class:"lvl-name"},L.name),h("span",{class:"lvl-meta"},`Grade ${L.n}×${L.n}`),
+      h("span",{class:"dots","aria-label":`Dificuldade ${i+1} de 4`},[0,1,2,3].map(d=>h("i",{class:d<=i?"on":""}))),
+      h("span",{class:"lvl-prog"},sv.length?`${sv.length} resolvido${sv.length>1?"s":""} · ${st} estrela${st===1?"":"s"}`:"nenhum resolvido ainda"));
+  }));
+}
+function freeView(){
+  const l=save.level,lv=save.levels[l];let rec=lv.list[lv.idx],c;
+  try{c=getCase(rec);}catch(e){console.error(e);lv.list.splice(lv.idx,1);if(!lv.list.length)lv.list.push(newRec(l,{classic:l}));lv.idx=Math.min(lv.idx,lv.list.length-1);return freeView();}
+  const prev=h("button",{type:"button",class:"iconbtn","aria-label":"Caso anterior",disabled:lv.idx===0,onclick:()=>{lv.idx--;persist();render();}},icon("left"));
+  const next=h("button",{type:"button",class:"iconbtn","aria-label":"Próximo caso da lista",disabled:lv.idx>=lv.list.length-1,onclick:()=>{lv.idx++;persist();render();}},icon("right"));
+  const code=rec.classic!=null?h("span",{class:"code static"},"Clássico"):h("button",{type:"button",class:"code",title:"Copiar código do caso",onclick:()=>{
+    (navigator.clipboard?navigator.clipboard.writeText(rec.id):Promise.reject()).then(()=>toast("Código "+rec.id+" copiado"),()=>toast("Código do caso: "+rec.id));}},"#"+rec.id);
+  const form=h("form",{class:"codeform",onsubmit:e=>{e.preventDefault();const err=openCode($("input",e.target).value);if(err)$(".codemsg",e.target.parentNode).textContent=err;}},
+    h("input",{class:"codein",type:"text",placeholder:"Ex.: P-1K3Z9A","aria-label":"Código do caso",maxlength:"10",autocomplete:"off"}),h("button",{type:"submit",class:"btn ghost sm"},"Abrir"));
+  const head=h("section",{class:"card casehead"},
+    h("div",{class:"case-tools"},
+      h("div",{class:"casenav"},prev,h("p",{class:"kicker"},`Caso ${lv.idx+1} de ${lv.list.length} · ${c.level} · ${c.size}×${c.size}`),next),
+      h("div",{class:"casetools-r"},code,timerEl(rec),
+        h("button",{type:"button",class:"btn ghost sm refresh",title:"Gerar um caso inédito neste nível",onclick:e=>newCase(l,e.currentTarget)},icon("refresh"),"Novo caso"))),
+    h("h2",{},c.title),h("p",{class:"intro"},c.intro),
+    h("details",{class:"codebox"},h("summary",{},"Jogar um caso por código"),form,h("p",{class:"codemsg small"},"")));
+  const ctx={label:`${LV[l].name} ${rec.classic!=null?"(clássico)":"#"+rec.id}`,
+    actions:[h("button",{type:"button",class:"btn refresh",onclick:e=>newCase(l,e.currentTarget)},icon("refresh"),"Novo caso"),
+      l<LV.length-1?h("button",{type:"button",class:"btn ghost",onclick:()=>{save.level=l+1;persist();render();scrollTop();}},"Subir de nível →"):null]};
+  return[levelNav(),head,...caseBoard(ctx,c,rec)];
+}
+function achView(){
+  const got=ACH.filter(a=>save.ach[a.id]).length;
+  return[h("section",{class:"card"},h("p",{class:"kicker"},"Conquistas"),h("h2",{},`${got} de ${ACH.length} desbloqueadas`),
+    h("div",{class:"pbar"},h("i",{style:`width:${Math.round(got/ACH.length*100)}%`})),
+    h("div",{class:"achs"},ACH.map(a=>{const on=!!save.ach[a.id];return h("div",{class:"ach"+(on?" on":"")},
+      h("span",{class:"medal","aria-hidden":"true"},a.sym),h("div",{},h("b",{},a.name),h("span",{class:"mute small"},a.d),on?h("span",{class:"when"},`Desbloqueada em ${dkBR(save.ach[a.id])}`):null));}))),
+    h("section",{class:"card"},h("h3",{},"Seus números"),h("ul",{class:"statl"},
+      h("li",{},"Casos resolvidos: ",h("b",{},totals().solved)),h("li",{},"Estrelas: ",h("b",{},totals().stars)),
+      h("li",{},"Capítulos da campanha: ",h("b",{},`${CHAPTERS.filter((_,k)=>campSolved(k)).length}/${CHAPTERS.length}`)),
+      h("li",{},"Casos do dia resolvidos: ",h("b",{},save.daily.done.length)),h("li",{},"Sequência atual: ",h("b",{},`${streak()} dia(s)`))))];
 }
 function render(){
-  renderTop();
-  const app=$("#app");
-  app.replaceChildren(renderTabs(),howTo(),renderCase());
+  renderTop();VIEW=null;refreshSide=()=>{};redrawWork=()=>{};
+  let body;
+  try{
+    if(save.mode==="camp")body=save.camp.open!=null&&chapterOpen(save.camp.open)?campCase(save.camp.open):campMap();
+    else if(save.mode==="daily")body=dailyView();
+    else if(save.mode==="ach")body=achView();
+    else body=freeView();
+  }catch(e){console.error(e);body=[h("section",{class:"card"},h("p",{},"Algo deu errado ao montar este caso."))];}
+  $("#app").replaceChildren(...[modeNav(),save.mode==="ach"?null:howTo(),...body].filter(Boolean));
+  if(!save.seen){save.seen=true;persist();}
 }
+setInterval(()=>{const el=$("#timer");if(!el||document.hidden||!VIEW||VIEW.solved)return;VIEW.t=(VIEW.t||0)+1;el.textContent=fmt(VIEW.t);if(VIEW.t%5===0)persist();},1000);
+window.addEventListener("pagehide",persist);
 $("#wipe").addEventListener("click",()=>{
-  if(!confirm("Apagar todo o progresso e recomeçar?")) return;
-  try{ localStorage.removeItem(KEY); }catch(e){}
-  save={cases:{},auto:true,current:0}; cur=0; render();
+  if(!confirm("Apagar todo o progresso e recomeçar?"))return;
+  try{localStorage.removeItem(KEY);localStorage.removeItem(OLD);}catch(e){}
+  cache.clear();for(const k in hist)delete hist[k];
+  save=loadSave();render();
 });
+let installEvt=null;
+window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();installEvt=e;const b=$("#install");if(b)b.hidden=false;});
+const ib=$("#install");if(ib)ib.addEventListener("click",()=>{if(installEvt){installEvt.prompt();installEvt=null;ib.hidden=true;}});
+if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol))navigator.serviceWorker.register("sw.js").catch(()=>{});
 render();
+
 </script>
 </body>
 </html>
